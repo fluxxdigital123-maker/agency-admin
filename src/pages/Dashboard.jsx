@@ -5,27 +5,31 @@ import ClientStageCards from "@/components/dashboard/ClientStageCards";
 import DailyObjectives from "@/components/dashboard/DailyObjectives";
 import Notifications from "@/components/dashboard/Notifications";
 import IntegrationBanner from "@/components/settings/IntegrationBanner";
+import { computeChurnRisk } from "@/lib/churnRisk";
 
 export default function Dashboard() {
   const [clients, setClients] = useState([]);
   const [payments, setPayments] = useState([]);
   const [progress, setProgress] = useState([]);
   const [viewSnapshots, setViewSnapshots] = useState([]);
+  const [clips, setClips] = useState([]);
   const [loading, setLoading] = useState(true);
 
   async function load() {
     setLoading(true);
     try {
-      const [c, p, pr, vs] = await Promise.all([
+      const [c, p, pr, vs, cl] = await Promise.all([
         base44.entities.Client.list("-created_date", 200),
         base44.entities.Payment.list("-dueDate", 1000),
         base44.entities.ClientProgress.list("-updatedAt", 1000),
         base44.entities.ViewSnapshot.list("-date", 2000),
+        base44.entities.Clip.list("-created_date", 1000),
       ]);
       setClients(c || []);
       setPayments(p || []);
       setProgress(pr || []);
       setViewSnapshots(vs || []);
+      setClips(cl || []);
     } finally {
       setLoading(false);
     }
@@ -58,6 +62,20 @@ export default function Dashboard() {
     }
     return m;
   }, [progress]);
+
+  const riskByClient = useMemo(() => {
+    const m = {};
+    for (const c of activeClients) {
+      m[c.id] = computeChurnRisk({
+        client: c,
+        viewSnapshots: viewSnapshots.filter((s) => s.client === c.id),
+        payments: payments.filter((p) => p.client === c.id),
+        clips: clips.filter((cl) => cl.client === c.id),
+        progress: progress.filter((pr) => pr.client === c.id),
+      });
+    }
+    return m;
+  }, [activeClients, viewSnapshots, payments, clips, progress]);
 
   if (loading) {
     return (
@@ -92,10 +110,10 @@ export default function Dashboard() {
 
       <section>
         <h2 className="text-[18px] font-semibold tracking-tight mb-3">Clients</h2>
-        <ClientStageCards clients={activeClients} progressByClient={progressByClient} />
+        <ClientStageCards clients={activeClients} progressByClient={progressByClient} riskByClient={riskByClient} />
       </section>
 
-      <DailyObjectives activeClients={activeClients} viewSnapshots={viewSnapshots} />
+      <DailyObjectives activeClients={activeClients} viewSnapshots={viewSnapshots} riskByClient={riskByClient} />
     </div>
   );
 }

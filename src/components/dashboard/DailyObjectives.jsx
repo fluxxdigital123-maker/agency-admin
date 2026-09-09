@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { CheckCircle2, Circle, AlertTriangle, TrendingDown, Bell } from "lucide-react";
+import { CheckCircle2, Circle, AlertTriangle, TrendingDown, Bell, ShieldAlert } from "lucide-react";
 import { computeGuarantee } from "@/lib/guarantee";
 import { base44 } from "@/api/base44Client";
 import { fmtDate } from "@/lib/format";
+import RiskPill from "@/components/clients/RiskPill";
 
 const DAY_MS = 86400000;
 
-export default function DailyObjectives({ activeClients, viewSnapshots = [] }) {
+export default function DailyObjectives({ activeClients, viewSnapshots = [], riskByClient }) {
   const [done, setDone] = useState({});
   const [leads, setLeads] = useState([]);
   const today = new Date();
@@ -43,6 +44,13 @@ export default function DailyObjectives({ activeClients, viewSnapshots = [] }) {
       .filter((l) => l.nextFollowUp && l.status !== "CLOSED" && l.status !== "LOST" && l.nextFollowUp <= todayStr)
       .sort((a, b) => a.nextFollowUp.localeCompare(b.nextFollowUp));
   }, [leads, todayStr]);
+
+  const highRisk = useMemo(() => {
+    return (activeClients || [])
+      .map((c) => ({ client: c, risk: riskByClient?.[c.id] }))
+      .filter((x) => x.risk && x.risk.level === "HIGH")
+      .sort((a, b) => (b.risk?.score || 0) - (a.risk?.score || 0));
+  }, [activeClients, riskByClient]);
 
   function toggle(id) {
     setDone((d) => ({ ...d, [id]: !d[id] }));
@@ -112,6 +120,30 @@ export default function DailyObjectives({ activeClients, viewSnapshots = [] }) {
             );
           })}
         </ul>
+      )}
+
+      {highRisk.length > 0 && (
+        <div className="mt-5 pt-4" style={{ borderTop: "0.5px solid var(--border)" }}>
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldAlert className="w-4 h-4" style={{ color: "#FF453A" }} />
+            <h3 className="text-[14px] font-semibold tracking-tight">High churn risk</h3>
+            <span className="text-[12px] text-muted-foreground">{highRisk.length}</span>
+          </div>
+          <ul className="space-y-1.5">
+            {highRisk.map(({ client, risk }) => (
+              <li key={client.id}>
+                <a
+                  href={`/clients/${client.id}`}
+                  className="flex items-center justify-between gap-2 rounded-[10px] px-3 py-2 hover:bg-white/[0.03]"
+                  style={{ background: "rgba(255,255,255,0.03)" }}
+                >
+                  <span className="text-[13px] font-medium truncate">{client.name}</span>
+                  <RiskPill risk={risk} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {followUps.length > 0 && (

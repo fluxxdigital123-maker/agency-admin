@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useAiConfigured, analyzeChannel } from "@/lib/aiStatus";
@@ -21,6 +21,7 @@ import GuaranteeCard from "@/components/clients/GuaranteeCard";
 import ClientFormModal from "@/components/clients/ClientFormModal";
 import InviteClientModal from "@/components/clients/InviteClientModal";
 import { UserPlus } from "lucide-react";
+import { computeChurnRisk } from "@/lib/churnRisk";
 
 export default function ClientDetail() {
   const { id } = useParams();
@@ -33,6 +34,7 @@ export default function ClientDetail() {
   const [payments, setPayments] = useState([]);
   const [snapshots, setSnapshots] = useState([]);
   const [viewSnaps, setViewSnaps] = useState([]);
+  const [clips, setClips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState("");
@@ -49,18 +51,20 @@ export default function ClientDetail() {
       setClient(c);
       setNotes(c.notes || "");
       setNotesDirty(false);
-      const [pr, tm, pm, an, vs] = await Promise.all([
+      const [pr, tm, pm, an, vs, cl] = await Promise.all([
         base44.entities.ClientProgress.filter({ client: id }, "-updatedAt", 100),
         base44.entities.TeamMember.filter({ client: id }, "-created_date", 100),
         base44.entities.Payment.filter({ client: id }, "-dueDate", 100),
         base44.entities.AnalyticsSnapshot.filter({ client: id }, "-date", 50),
         base44.entities.ViewSnapshot.filter({ client: id }, "-date", 500),
+        base44.entities.Clip.filter({ client: id }, "-created_date", 500),
       ]);
       setProgress(pr || []);
       setTeam(tm || []);
       setPayments(pm || []);
       setSnapshots(an || []);
       setViewSnaps(vs || []);
+      setClips(cl || []);
     } catch {
       setClient(null);
     } finally {
@@ -125,6 +129,11 @@ export default function ClientDetail() {
       /* ignore */
     }
   }
+
+  const risk = useMemo(
+    () => (client ? computeChurnRisk({ client, viewSnapshots: viewSnaps, payments, clips, progress }) : null),
+    [client, viewSnaps, payments, clips, progress]
+  );
 
   if (loading) {
     return (
@@ -215,6 +224,7 @@ export default function ClientDetail() {
         refreshing={refreshing}
         onRefresh={handleRefresh}
         refreshError={refreshError}
+        risk={risk}
       />
 
       <StrategySection

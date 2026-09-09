@@ -5,8 +5,9 @@ import {
 import { PLAN_LABELS } from "@/lib/clientStages";
 import { fmtMoney, fmtDate } from "@/lib/format";
 import AiFeatureGuard from "@/components/AiFeatureGuard";
+import RiskPill from "@/components/clients/RiskPill";
 
-export default function ClientOverview({ client, aiConfigured, refreshing, onRefresh, refreshError }) {
+export default function ClientOverview({ client, aiConfigured, refreshing, onRefresh, refreshError, risk }) {
   const growth = (client.growthOpportunities || "")
     .split("\n")
     .map((s) => s.trim())
@@ -35,6 +36,7 @@ export default function ClientOverview({ client, aiConfigured, refreshing, onRef
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-[22px] font-semibold tracking-tight truncate">{client.name}</h2>
               <StatusBadge status={client.status} />
+              <RiskPill risk={risk} />
             </div>
             {client.channelUrl && (
               <a
