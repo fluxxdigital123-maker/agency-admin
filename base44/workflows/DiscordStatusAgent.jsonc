@@ -1,0 +1,45 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "discord_status_agent",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_agent": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "discordStatusAgent",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run Discord status agent",
+            "description": "Infer production stages from Discord messages"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/30 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Every 30 minutes, reads recent Discord messages from each connected client server (read-only) and infers the current production stage via AI, writing a ClientProgress entry with source AI_DISCORD.",
+  "name": "Discord Status Agent"
+}

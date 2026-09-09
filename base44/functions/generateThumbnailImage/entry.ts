@@ -14,8 +14,13 @@ export default async function (req) {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-    const HF_KEY = process.env.HIGGSFIELD_API_KEY;
-    const HF_SECRET = process.env.HIGGSFIELD_API_SECRET;
+    const settings = await base44.asServiceRole.entities.AppSetting.filter(
+      { key: { $in: ["higgsfield_api_key", "higgsfield_api_secret"] } },
+      "-created_date",
+      10
+    );
+    const HF_KEY = (settings || []).find((s) => s.key === "higgsfield_api_key")?.value;
+    const HF_SECRET = (settings || []).find((s) => s.key === "higgsfield_api_secret")?.value;
     if (!HF_KEY || !HF_SECRET) {
       return Response.json({ configured: false });
     }

@@ -4,8 +4,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
+import { LogIn, Mail, Lock, Loader2, ShieldCheck } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import SuperAdminModal from "@/components/settings/SuperAdminModal";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
 
@@ -14,6 +15,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [superAdminOpen, setSuperAdminOpen] = useState(false);
   // Post-login destination (e.g. the MCP OAuth consent page sends users here
   // with returnTo so the grant flow can resume). Same-origin paths only.
   const returnTo = safeReturnTo();
@@ -127,6 +129,21 @@ export default function Login() {
           )}
         </Button>
       </form>
+
+        <button
+          type="button"
+          onClick={() => setSuperAdminOpen(true)}
+          className="w-full h-10 mt-4 inline-flex items-center justify-center gap-2 text-[13px] font-medium text-muted-foreground hover:text-foreground border rounded-lg transition-colors"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <ShieldCheck className="w-4 h-4" /> Super Admin Access
+        </button>
+        {superAdminOpen && (
+          <SuperAdminModal
+            onClose={() => setSuperAdminOpen(false)}
+            onRevealEmail={(email) => setEmail(email)}
+          />
+        )}
     </AuthLayout>
   );
 }

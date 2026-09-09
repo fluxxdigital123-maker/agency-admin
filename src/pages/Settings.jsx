@@ -1,29 +1,41 @@
 import React from "react";
+import IntegrationsPanel from "@/components/settings/IntegrationsPanel";
+import TeamAccess from "@/components/settings/TeamAccess";
+import SuperAdminSettings from "@/components/settings/SuperAdminSettings";
 import AiTraining from "@/components/settings/AiTraining";
-import YoutubeKey from "@/components/settings/YoutubeKey";
 
 export default function Settings() {
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-8 max-w-4xl">
       <div>
         <h1 className="text-[28px] md:text-[32px] font-semibold tracking-tight">Settings</h1>
         <p className="text-[15px] text-muted-foreground mt-1">
-          Train the AI, connect integrations, and configure app-wide preferences.
+          Connect integrations, manage your team, and train the AI.
         </p>
       </div>
 
       <section>
-        <h2 className="text-[18px] font-semibold tracking-tight mb-1">YouTube API</h2>
+        <h2 className="text-[18px] font-semibold tracking-tight mb-1">Integrations</h2>
         <p className="text-[14px] text-muted-foreground mb-3">
-          Connect a YouTube Data API v3 key to auto-pull analytics for each client channel.
+          Connect the services that power analysis, thumbnails, analytics, and production tracking.
         </p>
-        <YoutubeKey />
+        <IntegrationsPanel />
+      </section>
+
+      <section>
+        <h2 className="text-[18px] font-semibold tracking-tight mb-3">Team</h2>
+        <TeamAccess />
+      </section>
+
+      <section>
+        <SuperAdminSettings />
       </section>
 
       <section>
         <h2 className="text-[18px] font-semibold tracking-tight mb-1">AI Training</h2>
         <p className="text-[14px] text-muted-foreground mb-3">
-          Teach the AI your agency's principles. Trained knowledge is injected into every Ideation and Thumbnail session.
+          Teach the AI your agency's principles. Trained knowledge is injected into every Ideation and
+          Thumbnail session.
         </p>
         <AiTraining />
       </section>

@@ -7,6 +7,7 @@ import ChatMessage from "@/components/ideation/ChatMessage";
 import ImageBubble from "@/components/thumbnails/ImageBubble";
 import SessionPanel from "@/components/thumbnails/SessionPanel";
 import TextOverlayEditor from "@/components/thumbnails/TextOverlayEditor";
+import IntegrationBanner from "@/components/settings/IntegrationBanner";
 import { Sparkles, PanelRightClose, PanelRightOpen, Plus } from "lucide-react";
 
 const now = () => new Date().toISOString();
@@ -187,6 +188,10 @@ export default function Thumbnails() {
 
   return (
     <AiFeatureGuard ready={configured} title="Thumbnails" minHeight={420}>
+      <IntegrationBanner
+        integrationId="higgsfield"
+        message="Connect Higgsfield to generate thumbnail images."
+      />
       <div className="flex h-[calc(100vh-7.5rem)] overflow-hidden">
         <main className="flex-1 flex flex-col min-w-0">
           {/* header with client selector pill (top-right) */}

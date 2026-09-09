@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import StatCards from "@/components/dashboard/StatCards";
 import ClientStageCards from "@/components/dashboard/ClientStageCards";
 import DailyObjectives from "@/components/dashboard/DailyObjectives";
+import IntegrationBanner from "@/components/settings/IntegrationBanner";
 
 export default function Dashboard() {
   const [clients, setClients] = useState([]);
@@ -70,6 +71,11 @@ export default function Dashboard() {
           Your agency at a glance — revenue, clients, and what needs attention today.
         </p>
       </div>
+
+      <IntegrationBanner
+        integrationId="discord"
+        message="Connect the Discord bot to enable automatic production-stage detection (runs every ~30 min, read-only)."
+      />
 
       <StatCards
         mrr={mrr}
