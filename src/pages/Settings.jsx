@@ -3,6 +3,7 @@ import IntegrationsPanel from "@/components/settings/IntegrationsPanel";
 import TeamAccess from "@/components/settings/TeamAccess";
 import SuperAdminSettings from "@/components/settings/SuperAdminSettings";
 import AiTraining from "@/components/settings/AiTraining";
+import WeeklyDigestCard from "@/components/settings/WeeklyDigestCard";
 
 export default function Settings() {
   return (
@@ -29,6 +30,14 @@ export default function Settings() {
 
       <section>
         <SuperAdminSettings />
+      </section>
+
+      <section>
+        <h2 className="text-[18px] font-semibold tracking-tight mb-1">Weekly Digest</h2>
+        <p className="text-[14px] text-muted-foreground mb-3">
+          A Monday-morning email summary of your agency's week — views, output, pipeline, and what needs attention.
+        </p>
+        <WeeklyDigestCard />
       </section>
 
       <section>
