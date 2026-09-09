@@ -11,6 +11,8 @@ import PipelineTracker from "@/components/clients/PipelineTracker";
 import ClientTeam from "@/components/clients/ClientTeam";
 import ClientPayments from "@/components/clients/ClientPayments";
 import ClientAnalytics from "@/components/clients/ClientAnalytics";
+import SuggestedTitles from "@/components/clients/SuggestedTitles";
+import SuggestedIdeas from "@/components/clients/SuggestedIdeas";
 import ClientFormModal from "@/components/clients/ClientFormModal";
 
 export default function ClientDetail() {
@@ -167,6 +169,9 @@ export default function ClientDetail() {
         aiConfigured={aiConfigured}
         refreshing={refreshing}
       />
+
+      <SuggestedTitles client={client} />
+      <SuggestedIdeas client={client} />
 
       <PipelineTracker currentStage={currentStage} onSetStage={handleSetStage} />
 

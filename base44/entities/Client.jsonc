@@ -65,6 +65,20 @@
     },
     "notes": {
       "type": "string"
+    },
+    "suggestedTitles": {
+      "type": "string"
+    },
+    "suggestedTitlesAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "suggestedIdeas": {
+      "type": "string"
+    },
+    "suggestedIdeasAt": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [
