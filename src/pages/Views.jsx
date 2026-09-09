@@ -5,6 +5,7 @@ import ViewsCharts from "@/components/views/ViewsCharts";
 import LogViewsModal from "@/components/views/LogViewsModal";
 import CsvImportModal from "@/components/views/CsvImportModal";
 import ClipPipeline from "@/components/views/ClipPipeline";
+import Leaderboard from "@/components/views/Leaderboard";
 import { PLATFORM_LABEL } from "@/lib/viewPlatforms";
 
 function startOf(period) {
@@ -96,13 +97,13 @@ export default function Views() {
         </div>
         <div className="flex items-center gap-2">
           <div className="inline-flex rounded-full p-0.5" style={{ background: "rgba(128,128,128,0.15)" }}>
-            {["overview", "pipeline"].map((t) => (
+            {["overview", "pipeline", "leaderboard"].map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={"h-8 px-4 rounded-full text-[13px] font-medium " + (tab === t ? "bg-foreground text-background" : "text-muted-foreground")}
               >
-                {t === "overview" ? "Overview" : "Pipeline"}
+                {t === "overview" ? "Overview" : t === "pipeline" ? "Pipeline" : "Leaderboard"}
               </button>
             ))}
           </div>
@@ -210,6 +211,7 @@ export default function Views() {
       </>
       )}
       {tab === "pipeline" && <ClipPipeline clients={clients} />}
+      {tab === "leaderboard" && <Leaderboard clients={clients} snapshots={snapshots} />}
 
       {logOpen && <LogViewsModal clients={clients} onClose={() => setLogOpen(false)} onSaved={() => { setLogOpen(false); load(); }} />}
       {csvOpen && <CsvImportModal clients={clients} onClose={() => setCsvOpen(false)} onSaved={() => load()} />}
