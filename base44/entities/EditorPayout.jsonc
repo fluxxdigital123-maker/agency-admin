@@ -1,0 +1,34 @@
+{
+  "name": "EditorPayout",
+  "type": "object",
+  "properties": {
+    "teamMember": {
+      "type": "string",
+      "relation": "TeamMember",
+      "isForeignKey": true
+    },
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "month": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "paid": {
+      "type": "boolean",
+      "default": false
+    },
+    "paidDate": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "teamMember",
+    "month"
+  ]
+}

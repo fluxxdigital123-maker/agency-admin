@@ -4,25 +4,36 @@ import RevenueCards from "@/components/money/RevenueCards";
 import MrrBreakdown from "@/components/money/MrrBreakdown";
 import PaymentTracker from "@/components/money/PaymentTracker";
 import CostTracking from "@/components/money/CostTracking";
+import EditorPayouts from "@/components/money/EditorPayouts";
 import MoneyCharts from "@/components/money/MoneyCharts";
+import { computeEditorPayouts, monthKey } from "@/lib/editorPayouts";
 
 export default function Money() {
   const [clients, setClients] = useState([]);
   const [payments, setPayments] = useState([]);
   const [team, setTeam] = useState([]);
+  const [clips, setClips] = useState([]);
+  const [snapshots, setSnapshots] = useState([]);
+  const [payouts, setPayouts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   async function load() {
     setLoading(true);
     try {
-      const [c, p, t] = await Promise.all([
+      const [c, p, t, cl, vs, po] = await Promise.all([
         base44.entities.Client.list("-created_date", 200),
         base44.entities.Payment.list("-dueDate", 500),
         base44.entities.TeamMember.list("-created_date", 500),
+        base44.entities.Clip.list("-created_date", 1000),
+        base44.entities.ViewSnapshot.list("-date", 2000),
+        base44.entities.EditorPayout.list("-created_date", 1000),
       ]);
       setClients(c || []);
       setPayments(p || []);
       setTeam(t || []);
+      setClips(cl || []);
+      setSnapshots(vs || []);
+      setPayouts(po || []);
     } finally {
       setLoading(false);
     }
@@ -43,19 +54,29 @@ export default function Money() {
     [clients]
   );
 
+  const ym = monthKey();
+  const payoutByEditor = useMemo(
+    () => computeEditorPayouts(team, clips, snapshots, ym),
+    [team, clips, snapshots, ym]
+  );
+
   const teamCostByClient = useMemo(() => {
     const m = {};
     for (const t of team) {
-      m[t.client] = (m[t.client] || 0) + (t.cost || 0);
+      const e = payoutByEditor[t.id];
+      m[t.client] = (m[t.client] || 0) + (e ? e.owed : 0);
     }
     return m;
-  }, [team]);
+  }, [team, payoutByEditor]);
 
   const currentMRR = activeClients.reduce((s, c) => s + (c.monthlyFee || 0), 0);
   const totalRevenue = payments
     .filter((p) => p.status === "PAID")
     .reduce((s, p) => s + (p.amount || 0), 0);
-  const monthlyCost = team.reduce((s, t) => s + (t.cost || 0), 0);
+  const monthlyCost = useMemo(
+    () => Object.values(payoutByEditor).reduce((s, e) => s + e.owed, 0),
+    [payoutByEditor]
+  );
   const projectedAnnual = currentMRR * 12;
   const netProfit = currentMRR - monthlyCost;
 
@@ -137,6 +158,8 @@ export default function Money() {
       <PaymentTracker payments={payments} clientMap={clientMap} onPaid={load} />
 
       <CostTracking clients={activeClients} teamCostByClient={teamCostByClient} />
+
+      <EditorPayouts team={team} clips={clips} snapshots={snapshots} payouts={payouts} clientMap={clientMap} onPaid={load} />
 
       <MoneyCharts mrrGrowth={mrrGrowth} revVsCost={revVsCost} collection={collection} />
     </div>

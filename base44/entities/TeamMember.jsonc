@@ -21,6 +21,18 @@
     },
     "cost": {
       "type": "number"
+    },
+    "paymentType": {
+      "type": "string",
+      "enum": [
+        "FIXED_MONTHLY",
+        "PER_CLIP",
+        "PER_1000_VIEWS"
+      ],
+      "default": "FIXED_MONTHLY"
+    },
+    "rate": {
+      "type": "number"
     }
   },
   "required": [
