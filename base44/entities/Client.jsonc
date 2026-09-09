@@ -66,6 +66,9 @@
     "notes": {
       "type": "string"
     },
+    "baselineViews": {
+      "type": "number"
+    },
     "suggestedTitles": {
       "type": "string"
     },

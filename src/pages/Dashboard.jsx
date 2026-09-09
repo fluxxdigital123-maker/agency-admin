@@ -9,19 +9,22 @@ export default function Dashboard() {
   const [clients, setClients] = useState([]);
   const [payments, setPayments] = useState([]);
   const [progress, setProgress] = useState([]);
+  const [viewSnapshots, setViewSnapshots] = useState([]);
   const [loading, setLoading] = useState(true);
 
   async function load() {
     setLoading(true);
     try {
-      const [c, p, pr] = await Promise.all([
+      const [c, p, pr, vs] = await Promise.all([
         base44.entities.Client.list("-created_date", 200),
         base44.entities.Payment.list("-dueDate", 1000),
         base44.entities.ClientProgress.list("-updatedAt", 1000),
+        base44.entities.ViewSnapshot.list("-date", 2000),
       ]);
       setClients(c || []);
       setPayments(p || []);
       setProgress(pr || []);
+      setViewSnapshots(vs || []);
     } finally {
       setLoading(false);
     }
@@ -89,7 +92,7 @@ export default function Dashboard() {
         <ClientStageCards clients={activeClients} progressByClient={progressByClient} />
       </section>
 
-      <DailyObjectives activeClients={activeClients} />
+      <DailyObjectives activeClients={activeClients} viewSnapshots={viewSnapshots} />
     </div>
   );
 }

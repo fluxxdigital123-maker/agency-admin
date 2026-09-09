@@ -14,6 +14,7 @@ import ClientAnalytics from "@/components/clients/ClientAnalytics";
 import ClientClips from "@/components/clients/ClientClips";
 import SuggestedTitles from "@/components/clients/SuggestedTitles";
 import SuggestedIdeas from "@/components/clients/SuggestedIdeas";
+import GuaranteeCard from "@/components/clients/GuaranteeCard";
 import ClientFormModal from "@/components/clients/ClientFormModal";
 
 export default function ClientDetail() {
@@ -26,6 +27,7 @@ export default function ClientDetail() {
   const [team, setTeam] = useState([]);
   const [payments, setPayments] = useState([]);
   const [snapshots, setSnapshots] = useState([]);
+  const [viewSnaps, setViewSnaps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState("");
@@ -40,16 +42,18 @@ export default function ClientDetail() {
       setClient(c);
       setNotes(c.notes || "");
       setNotesDirty(false);
-      const [pr, tm, pm, an] = await Promise.all([
+      const [pr, tm, pm, an, vs] = await Promise.all([
         base44.entities.ClientProgress.filter({ client: id }, "-updatedAt", 100),
         base44.entities.TeamMember.filter({ client: id }, "-created_date", 100),
         base44.entities.Payment.filter({ client: id }, "-dueDate", 100),
         base44.entities.AnalyticsSnapshot.filter({ client: id }, "-date", 50),
+        base44.entities.ViewSnapshot.filter({ client: id }, "-date", 500),
       ]);
       setProgress(pr || []);
       setTeam(tm || []);
       setPayments(pm || []);
       setSnapshots(an || []);
+      setViewSnaps(vs || []);
     } catch {
       setClient(null);
     } finally {
@@ -173,6 +177,8 @@ export default function ClientDetail() {
 
       <SuggestedTitles client={client} />
       <SuggestedIdeas client={client} />
+
+      <GuaranteeCard client={client} viewSnapshots={viewSnaps} analyticsSnapshots={snapshots} onSaved={load} />
 
       <PipelineTracker currentStage={currentStage} onSetStage={handleSetStage} />
 

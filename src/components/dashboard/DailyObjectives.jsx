@@ -1,18 +1,28 @@
-import React, { useState } from "react";
-import { CheckCircle2, Circle, AlertTriangle } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { CheckCircle2, Circle, AlertTriangle, TrendingDown } from "lucide-react";
+import { computeGuarantee } from "@/lib/guarantee";
 
 const DAY_MS = 86400000;
 
-export default function DailyObjectives({ activeClients }) {
+export default function DailyObjectives({ activeClients, viewSnapshots = [] }) {
   const [done, setDone] = useState({});
   const today = new Date();
+
+  const snapsByClient = useMemo(() => {
+    const m = {};
+    for (const s of viewSnapshots) {
+      (m[s.client] = m[s.client] || []).push(s);
+    }
+    return m;
+  }, [viewSnapshots]);
 
   const items = activeClients
     .filter((c) => c.startDate)
     .map((c) => {
       const start = new Date(c.startDate);
       const days = Math.floor((today - start) / DAY_MS) + 1;
-      return { client: c, days };
+      const g = computeGuarantee(c, snapsByClient[c.id] || [], []);
+      return { client: c, days, guarantee: g };
     })
     .filter((it) => it.days <= 30 && it.days >= 1);
 
@@ -37,10 +47,14 @@ export default function DailyObjectives({ activeClients }) {
         </p>
       ) : (
         <ul className="space-y-2">
-          {items.map(({ client, days }) => {
+          {items.map(({ client, days, guarantee }) => {
             const approaching = days >= 25;
-            const color = approaching ? "#FF9F0A" : "#30D158";
+            const underZero = guarantee && guarantee.pct !== null && guarantee.pct <= 0 && days >= 20;
+            const color = underZero ? "#FF453A" : approaching ? "#FF9F0A" : "#30D158";
             const isDone = !!done[client.id];
+            const pctLabel = guarantee && guarantee.pct !== null
+              ? `${guarantee.pct > 0 ? "+" : ""}${guarantee.pct.toFixed(0)}%`
+              : null;
             return (
               <li key={client.id}>
                 <button
@@ -50,6 +64,8 @@ export default function DailyObjectives({ activeClients }) {
                 >
                   {isDone ? (
                     <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: "#30D158" }} />
+                  ) : underZero ? (
+                    <TrendingDown className="w-5 h-5 shrink-0" style={{ color }} />
                   ) : (
                     <Circle className="w-5 h-5 shrink-0 text-muted-foreground" />
                   )}
@@ -61,10 +77,13 @@ export default function DailyObjectives({ activeClients }) {
                       {client.name}
                     </div>
                     <div className="text-[12px] text-muted-foreground">
-                      Ensure a views increase — day {days}/30
+                      {underZero
+                        ? `Under +0% at day ${days} — needs a views increase`
+                        : `Ensure a views increase — day ${days}/30`}
+                      {pctLabel && !underZero ? ` · ${pctLabel}` : ""}
                     </div>
                   </div>
-                  {approaching && !isDone && (
+                  {(approaching || underZero) && !isDone && !underZero && (
                     <AlertTriangle className="w-4 h-4 shrink-0" style={{ color }} />
                   )}
                   <span className="text-[12px] font-semibold tabular-nums shrink-0" style={{ color }}>
