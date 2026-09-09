@@ -31,7 +31,9 @@
           "call": "invoke_backend_function",
           "with": {
             "function_name": "generateMonthlyInvoices",
-            "args": {}
+            "args": {
+              "system_secret": "b44sys_4f8a2c7e1d9b6a3f5e0c9d8b7a6e5f4c3b2a1098"
+            }
           },
           "then": "end",
           "x-base44": {

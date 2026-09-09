@@ -20,7 +20,8 @@
               "action": "${ .trigger.event_type }",
               "before": "${ if .trigger.event_type == \"update\" then ((.trigger.old_data // {}) | tojson) elif .trigger.event_type == \"delete\" then ((.trigger.data // {}) | tojson) else null end }",
               "after": "${ if .trigger.event_type == \"delete\" then null else ((.trigger.data // {}) | tojson) end }",
-              "createdById": "${ (.trigger.data // {}).created_by_id }"
+              "createdById": "${ (.trigger.data // {}).created_by_id }",
+              "system_secret": "b44sys_4f8a2c7e1d9b6a3f5e0c9d8b7a6e5f4c3b2a1098"
             }
           },
           "then": "end",

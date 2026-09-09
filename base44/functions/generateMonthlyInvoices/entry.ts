@@ -1,4 +1,5 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.44";
+import { authorizeSystemCall } from "../../shared/internalAuth.ts";
 
 function ym(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -15,16 +16,11 @@ function addDays(d, n) {
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
+    const body = await req.json().catch(() => ({}));
 
-    // Allow system (workflow) invocation; block non-admin direct calls.
-    let user = null;
-    try {
-      user = await base44.auth.me();
-    } catch {
-      /* workflow context — no user */
-    }
-    if (user && user.role !== "admin")
-      return Response.json({ error: "Forbidden" }, { status: 403 });
+    const { authorized } = await authorizeSystemCall(base44, body || {});
+    if (!authorized)
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     const now = new Date();
     const thisMonth = ym(now);
