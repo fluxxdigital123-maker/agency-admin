@@ -5,6 +5,7 @@ import SuperAdminSettings from "@/components/settings/SuperAdminSettings";
 import AiTraining from "@/components/settings/AiTraining";
 import WeeklyDigestCard from "@/components/settings/WeeklyDigestCard";
 import RolesPanel from "@/components/settings/RolesPanel";
+import DataExport from "@/components/settings/DataExport";
 
 export default function Settings() {
   return (
@@ -48,6 +49,14 @@ export default function Settings() {
           assigned clients' clips; Managers see everything except Money and Settings.
         </p>
         <RolesPanel />
+      </section>
+
+      <section>
+        <h2 className="text-[18px] font-semibold tracking-tight mb-1">Data Export & Backup</h2>
+        <p className="text-[14px] text-muted-foreground mb-3">
+          Export any entity to CSV, download a full JSON backup, or restore from a previous backup file.
+        </p>
+        <DataExport />
       </section>
 
       <section>
