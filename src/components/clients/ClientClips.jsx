@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { Film, Plus, X, ExternalLink, Filter } from "lucide-react";
+import { Film, Plus, X, ExternalLink, Filter, MessageSquareQuote } from "lucide-react";
+import ClipDetailModal from "@/components/clips/ClipDetailModal";
 
 const PLATFORMS = ["YOUTUBE_SHORTS", "TIKTOK", "INSTAGRAM_REELS", "X", "LINKEDIN"];
 const STATUSES = ["QUEUED", "EDITING", "REVIEW", "APPROVED", "POSTED"];
@@ -68,6 +69,7 @@ export default function ClientClips({ clientId, team }) {
   const [fPlatform, setFPlatform] = useState("");
   const [fEditor, setFEditor] = useState("");
   const [fStatus, setFStatus] = useState("");
+  const [detailClip, setDetailClip] = useState(null);
 
   const editorMap = useMemo(() => {
     const m = {};
@@ -160,7 +162,10 @@ export default function ClientClips({ clientId, team }) {
               {filtered.map((c) => (
                 <tr key={c.id} className="border-b last:border-0 hover:bg-foreground/[0.02]" style={{ borderColor: "var(--border)" }}>
                   <td className="px-2 py-2.5 max-w-[220px]">
-                    <div className="font-medium truncate">{c.title}</div>
+                    <button onClick={() => setDetailClip(c)} className="font-medium truncate text-left hover:text-primary transition-colors flex items-center gap-1">
+                      {c.title}
+                      <MessageSquareQuote className="w-3 h-3 text-muted-foreground/60 shrink-0" />
+                    </button>
                     {c.sourceVideoUrl && (
                       <a href={c.sourceVideoUrl} target="_blank" rel="noreferrer" className="text-[11px] text-muted-foreground hover:text-primary inline-flex items-center gap-0.5 truncate">
                         <ExternalLink className="w-3 h-3" /> source
@@ -208,6 +213,10 @@ export default function ClientClips({ clientId, team }) {
           onClose={() => setAddOpen(false)}
           onSaved={() => { setAddOpen(false); load(); }}
         />
+      )}
+
+      {detailClip && (
+        <ClipDetailModal clip={detailClip} onClose={() => setDetailClip(null)} />
       )}
     </div>
   );
