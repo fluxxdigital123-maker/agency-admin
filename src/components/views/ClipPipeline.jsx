@@ -30,7 +30,7 @@ function reviewStale(clip) {
   return Date.now() - colTimestamp(clip).getTime() > 48 * 3600000;
 }
 
-export default function ClipPipeline({ clients }) {
+export default function ClipPipeline({ clients, allowedClientIds }) {
   const [clips, setClips] = useState([]);
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,12 +56,17 @@ export default function ClipPipeline({ clients }) {
   const clientMap = useMemo(() => { const m = {}; for (const c of clients || []) m[c.id] = c; return m; }, [clients]);
   const editorMap = useMemo(() => { const m = {}; for (const t of team) m[t.id] = t; return m; }, [team]);
 
+  const visibleClips = useMemo(() => {
+    if (!allowedClientIds) return clips;
+    return clips.filter((c) => allowedClientIds.includes(c.client));
+  }, [clips, allowedClientIds]);
+
   const byStatus = useMemo(() => {
     const m = {};
     for (const s of COLUMNS) m[s] = [];
-    for (const c of clips) { if (m[c.status]) m[c.status].push(c); }
+    for (const c of visibleClips) { if (m[c.status]) m[c.status].push(c); }
     return m;
-  }, [clips]);
+  }, [visibleClips]);
 
   async function onDragEnd(res) {
     if (!res.destination || res.destination.droppableId === res.source.droppableId) return;
@@ -84,7 +89,7 @@ export default function ClipPipeline({ clients }) {
     );
   }
 
-  const staleCount = clips.filter(reviewStale).length;
+  const staleCount = visibleClips.filter(reviewStale).length;
 
   return (
     <div className="space-y-4">

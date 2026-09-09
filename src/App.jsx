@@ -27,6 +27,8 @@ import Team from '@/pages/Team';
 import Onboarding from '@/pages/Onboarding';
 import Settings from '@/pages/Settings';
 import Review from '@/pages/Review';
+import { RoleProvider } from "@/lib/RoleContext";
+import RoleGate from "@/components/RoleGate";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -61,19 +63,19 @@ const AuthenticatedApp = () => {
       <Route path="/review/:token" element={<Review />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/money" element={<Money />} />
-          <Route path="/clients" element={<Clients />} />
-          <Route path="/clients/:id" element={<ClientDetail />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/leads" element={<Leads />} />
-          <Route path="/ideation" element={<Ideation />} />
-          <Route path="/thumbnails" element={<Thumbnails />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/views" element={<Views />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/" element={<RoleGate page="dashboard"><Dashboard /></RoleGate>} />
+          <Route path="/money" element={<RoleGate page="money"><Money /></RoleGate>} />
+          <Route path="/clients" element={<RoleGate page="clients"><Clients /></RoleGate>} />
+          <Route path="/clients/:id" element={<RoleGate page="clientDetail"><ClientDetail /></RoleGate>} />
+          <Route path="/calendar" element={<RoleGate page="calendar"><Calendar /></RoleGate>} />
+          <Route path="/leads" element={<RoleGate page="leads"><Leads /></RoleGate>} />
+          <Route path="/ideation" element={<RoleGate page="ideation"><Ideation /></RoleGate>} />
+          <Route path="/thumbnails" element={<RoleGate page="thumbnails"><Thumbnails /></RoleGate>} />
+          <Route path="/analytics" element={<RoleGate page="analytics"><Analytics /></RoleGate>} />
+          <Route path="/views" element={<RoleGate page="views"><Views /></RoleGate>} />
+          <Route path="/team" element={<RoleGate page="team"><Team /></RoleGate>} />
+          <Route path="/onboarding" element={<RoleGate page="onboarding"><Onboarding /></RoleGate>} />
+          <Route path="/settings" element={<RoleGate page="settings"><Settings /></RoleGate>} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
@@ -88,11 +90,13 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <ScrollToTop />
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
+          <RoleProvider>
+            <Router>
+              <ScrollToTop />
+              <AuthenticatedApp />
+            </Router>
+            <Toaster />
+          </RoleProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </AuthProvider>

@@ -7,6 +7,8 @@ import CsvImportModal from "@/components/views/CsvImportModal";
 import ClipPipeline from "@/components/views/ClipPipeline";
 import Leaderboard from "@/components/views/Leaderboard";
 import { PLATFORM_LABEL } from "@/lib/viewPlatforms";
+import { useRole } from "@/lib/RoleContext";
+import { filterClientsByAccess } from "@/lib/roleAccess";
 
 function startOf(period) {
   const d = new Date();
@@ -26,6 +28,7 @@ export default function Views() {
   const [csvOpen, setCsvOpen] = useState(false);
   const [drillClient, setDrillClient] = useState("");
   const [tab, setTab] = useState("overview");
+  const { role, clientAccess } = useRole();
 
   async function load() {
     setLoading(true);
@@ -51,9 +54,17 @@ export default function Views() {
     return m;
   }, [clients]);
 
+  const visibleClients = useMemo(
+    () => filterClientsByAccess(clients, role, clientAccess),
+    [clients, role, clientAccess]
+  );
+  const visibleClientIds = useMemo(
+    () => new Set(visibleClients.map((c) => c.id)),
+    [visibleClients]
+  );
   const filtered = useMemo(
-    () => (snapshots || []).filter((s) => new Date(s.date) >= startOf(period)),
-    [snapshots, period]
+    () => (snapshots || []).filter((s) => new Date(s.date) >= startOf(period) && visibleClientIds.has(s.client)),
+    [snapshots, period, visibleClientIds]
   );
 
   const totals = useMemo(() => {
@@ -148,7 +159,7 @@ export default function Views() {
         <Stat icon={Share2} color="#FF9F0A" label={`Shares this ${period}`} value={totals.shares} />
       </div>
 
-      <ViewsCharts snapshots={filtered} clients={clients} />
+      <ViewsCharts snapshots={filtered} clients={visibleClients} />
 
       <div className="glass-card p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -163,7 +174,7 @@ export default function Views() {
             style={{ border: "0.5px solid var(--border)" }}
           >
             <option value="">Select a client</option>
-            {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {visibleClients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
         </div>
         {!drillClient ? (
@@ -210,11 +221,11 @@ export default function Views() {
 
       </>
       )}
-      {tab === "pipeline" && <ClipPipeline clients={clients} />}
-      {tab === "leaderboard" && <Leaderboard clients={clients} snapshots={snapshots} />}
+      {tab === "pipeline" && <ClipPipeline clients={visibleClients} allowedClientIds={role === "EDITOR" ? Array.from(visibleClientIds) : null} />}
+      {tab === "leaderboard" && <Leaderboard clients={visibleClients} snapshots={filtered} />}
 
-      {logOpen && <LogViewsModal clients={clients} onClose={() => setLogOpen(false)} onSaved={() => { setLogOpen(false); load(); }} />}
-      {csvOpen && <CsvImportModal clients={clients} onClose={() => setCsvOpen(false)} onSaved={() => load()} />}
+      {logOpen && <LogViewsModal clients={visibleClients} onClose={() => setLogOpen(false)} onSaved={() => { setLogOpen(false); load(); }} />}
+      {csvOpen && <CsvImportModal clients={visibleClients} onClose={() => setCsvOpen(false)} onSaved={() => load()} />}
     </div>
   );
 }

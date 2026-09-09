@@ -1,0 +1,28 @@
+{
+  "name": "UserRole",
+  "type": "object",
+  "properties": {
+    "userEmail": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "OWNER",
+        "MANAGER",
+        "EDITOR"
+      ],
+      "default": "EDITOR"
+    },
+    "clientAccess": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "userEmail",
+    "role"
+  ]
+}

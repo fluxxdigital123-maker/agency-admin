@@ -4,6 +4,7 @@ import TeamAccess from "@/components/settings/TeamAccess";
 import SuperAdminSettings from "@/components/settings/SuperAdminSettings";
 import AiTraining from "@/components/settings/AiTraining";
 import WeeklyDigestCard from "@/components/settings/WeeklyDigestCard";
+import RolesPanel from "@/components/settings/RolesPanel";
 
 export default function Settings() {
   return (
@@ -38,6 +39,15 @@ export default function Settings() {
           A Monday-morning email summary of your agency's week — views, output, pipeline, and what needs attention.
         </p>
         <WeeklyDigestCard />
+      </section>
+
+      <section>
+        <h2 className="text-[18px] font-semibold tracking-tight mb-1">Roles & Permissions</h2>
+        <p className="text-[14px] text-muted-foreground mb-3">
+          Assign Owner, Manager, or Editor roles to your team. Editors only see the Views tab and their
+          assigned clients' clips; Managers see everything except Money and Settings.
+        </p>
+        <RolesPanel />
       </section>
 
       <section>

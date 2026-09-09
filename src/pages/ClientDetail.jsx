@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useAiConfigured, analyzeChannel } from "@/lib/aiStatus";
+import { useRole } from "@/lib/RoleContext";
 import {
-  ArrowLeft, Pencil, Loader2, StickyNote, Check,
+  ArrowLeft, Pencil, Loader2, StickyNote, Check, ShieldAlert,
 } from "lucide-react";
 import ClientOverview from "@/components/clients/ClientOverview";
 import StrategySection from "@/components/clients/StrategySection";
@@ -37,6 +38,7 @@ export default function ClientDetail() {
   const [notes, setNotes] = useState("");
   const [notesDirty, setNotesDirty] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
+  const { role, clientAccess } = useRole();
 
   async function load() {
     try {
@@ -139,6 +141,39 @@ export default function ClientDetail() {
         >
           <ArrowLeft className="w-4 h-4" /> Back to clients
         </button>
+      </div>
+    );
+  }
+
+  const isEditor = role === "EDITOR";
+  if (isEditor && !clientAccess.includes(id)) {
+    return (
+      <div className="glass-card p-10 text-center max-w-md mx-auto mt-10">
+        <ShieldAlert className="w-8 h-8 mx-auto mb-3" style={{ color: "#FF453A" }} />
+        <h2 className="text-[20px] font-semibold tracking-tight">Access restricted</h2>
+        <p className="text-[14px] text-muted-foreground mt-1">
+          This client isn't assigned to your editor account.
+        </p>
+        <button
+          onClick={() => navigate("/views")}
+          className="mt-4 inline-flex items-center gap-2 text-[14px] font-medium text-primary"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Views
+        </button>
+      </div>
+    );
+  }
+
+  if (isEditor) {
+    return (
+      <div className="space-y-6">
+        <button
+          onClick={() => navigate("/views")}
+          className="inline-flex items-center gap-2 text-[14px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Views
+        </button>
+        <ClientClips clientId={id} team={team} />
       </div>
     );
   }

@@ -4,6 +4,8 @@ import {
   LayoutDashboard, Wallet, Users, Calendar, Target, Lightbulb,
   Image as ImageIcon, BarChart3, Eye, UsersRound, Rocket, Settings, PanelLeft,
 } from "lucide-react";
+import { useRole } from "@/lib/RoleContext";
+import { canAccessPath } from "@/lib/roleAccess";
 
 const navItems = [
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -21,6 +23,8 @@ const navItems = [
 ];
 
 export default function Sidebar({ collapsed, onToggle }) {
+  const { role } = useRole();
+  const items = navItems.filter((item) => canAccessPath(role, item.path));
   return (
     <aside
       className="fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-black transition-[width] duration-300 ease-out"
@@ -44,7 +48,7 @@ export default function Sidebar({ collapsed, onToggle }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
