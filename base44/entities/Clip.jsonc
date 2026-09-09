@@ -55,6 +55,19 @@
       "type": "string",
       "format": "date"
     },
+    "clientApproval": {
+      "type": "string",
+      "enum": [
+        "NOT_REQUIRED",
+        "PENDING",
+        "APPROVED",
+        "CHANGES_REQUESTED"
+      ],
+      "default": "NOT_REQUIRED"
+    },
+    "clientFeedback": {
+      "type": "string"
+    },
     "views": {
       "type": "number"
     },

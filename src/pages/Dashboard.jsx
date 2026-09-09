@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import StatCards from "@/components/dashboard/StatCards";
 import ClientStageCards from "@/components/dashboard/ClientStageCards";
 import DailyObjectives from "@/components/dashboard/DailyObjectives";
+import Notifications from "@/components/dashboard/Notifications";
 import IntegrationBanner from "@/components/settings/IntegrationBanner";
 
 export default function Dashboard() {
@@ -86,6 +87,8 @@ export default function Dashboard() {
         revenueThisMonth={revenueThisMonth}
         outstanding={outstanding}
       />
+
+      <Notifications />
 
       <section>
         <h2 className="text-[18px] font-semibold tracking-tight mb-3">Clients</h2>

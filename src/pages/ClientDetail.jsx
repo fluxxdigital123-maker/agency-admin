@@ -13,6 +13,7 @@ import ClientPayments from "@/components/clients/ClientPayments";
 import ClientAnalytics from "@/components/clients/ClientAnalytics";
 import ClientClips from "@/components/clients/ClientClips";
 import ClientReports from "@/components/clients/ClientReports";
+import ClientReviewCard from "@/components/clients/ClientReviewCard";
 import SuggestedTitles from "@/components/clients/SuggestedTitles";
 import SuggestedIdeas from "@/components/clients/SuggestedIdeas";
 import GuaranteeCard from "@/components/clients/GuaranteeCard";
@@ -178,6 +179,8 @@ export default function ClientDetail() {
 
       <SuggestedTitles client={client} />
       <SuggestedIdeas client={client} />
+
+      <ClientReviewCard client={client} onSaved={load} />
 
       <GuaranteeCard client={client} viewSnapshots={viewSnaps} analyticsSnapshots={snapshots} onSaved={load} />
 

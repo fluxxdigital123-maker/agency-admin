@@ -33,6 +33,26 @@ function Pill({ status }) {
   );
 }
 
+const APPROVAL_STYLE = {
+  NOT_REQUIRED: { bg: "rgba(120,120,128,0.16)", fg: "#98989F", label: "—" },
+  PENDING: { bg: "rgba(255,159,10,0.16)", fg: "#FF9F0A", label: "Pending" },
+  APPROVED: { bg: "rgba(48,209,88,0.16)", fg: "#30D158", label: "Approved" },
+  CHANGES_REQUESTED: { bg: "rgba(255,69,58,0.16)", fg: "#FF453A", label: "Changes" },
+};
+
+function ApprovalPill({ approval, feedback }) {
+  const a = APPROVAL_STYLE[approval] || APPROVAL_STYLE.NOT_REQUIRED;
+  return (
+    <span
+      title={feedback ? `Client: ${feedback}` : (approval === "NOT_REQUIRED" ? "Not sent for review" : approval)}
+      className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold"
+      style={{ background: a.bg, color: a.fg }}
+    >
+      {a.label}
+    </span>
+  );
+}
+
 function fmt(n) {
   if (n == null || isNaN(Number(n))) return "—";
   const v = Number(n);
@@ -127,6 +147,7 @@ export default function ClientClips({ clientId, team }) {
                 <th className="font-medium px-2 py-2">Platform</th>
                 <th className="font-medium px-2 py-2">Editor</th>
                 <th className="font-medium px-2 py-2">Status</th>
+                <th className="font-medium px-2 py-2">Approval</th>
                 <th className="font-medium px-2 py-2 text-right">Views</th>
                 <th className="font-medium px-2 py-2 text-right">Likes</th>
                 <th className="font-medium px-2 py-2 text-right">Comments</th>
@@ -149,6 +170,7 @@ export default function ClientClips({ clientId, team }) {
                   <td className="px-2 py-2.5">{PLATFORM_LABEL[c.platform] || c.platform}</td>
                   <td className="px-2 py-2.5">{c.editor ? (editorMap[c.editor]?.name || "—") : "—"}</td>
                   <td className="px-2 py-2.5"><Pill status={c.status} /></td>
+                  <td className="px-2 py-2.5"><ApprovalPill approval={c.clientApproval} feedback={c.clientFeedback} /></td>
                   <td className="px-2 py-2.5 text-right tabular-nums">{fmt(c.views)}</td>
                   <td className="px-2 py-2.5 text-right tabular-nums">{fmt(c.likes)}</td>
                   <td className="px-2 py-2.5 text-right tabular-nums">{fmt(c.comments)}</td>
@@ -158,7 +180,12 @@ export default function ClientClips({ clientId, team }) {
                     <select
                       value={c.status}
                       onChange={async (e) => {
-                        await base44.entities.Clip.update(c.id, { status: e.target.value });
+                        const newStatus = e.target.value;
+                        const patch = { status: newStatus };
+                        if (newStatus === "REVIEW" && (!c.clientApproval || c.clientApproval === "NOT_REQUIRED")) {
+                          patch.clientApproval = "PENDING";
+                        }
+                        await base44.entities.Clip.update(c.id, patch);
                         load();
                       }}
                       className="h-7 rounded-md px-1.5 text-[12px] outline-none bg-transparent"
