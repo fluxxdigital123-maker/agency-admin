@@ -5,6 +5,7 @@ import MrrBreakdown from "@/components/money/MrrBreakdown";
 import PaymentTracker from "@/components/money/PaymentTracker";
 import CostTracking from "@/components/money/CostTracking";
 import EditorPayouts from "@/components/money/EditorPayouts";
+import Invoices from "@/components/money/Invoices";
 import MoneyCharts from "@/components/money/MoneyCharts";
 import { computeEditorPayouts, monthKey } from "@/lib/editorPayouts";
 
@@ -156,6 +157,8 @@ export default function Money() {
       <MrrBreakdown clients={activeClients} payments={payments} />
 
       <PaymentTracker payments={payments} clientMap={clientMap} onPaid={load} />
+
+      <Invoices clients={clients} payments={payments} clientMap={clientMap} onPaid={load} />
 
       <CostTracking clients={activeClients} teamCostByClient={teamCostByClient} />
 

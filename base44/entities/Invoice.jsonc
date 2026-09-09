@@ -1,0 +1,46 @@
+{
+  "name": "Invoice",
+  "type": "object",
+  "properties": {
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "invoiceNumber": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "issueDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "dueDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "SENT",
+        "PAID",
+        "OVERDUE"
+      ],
+      "default": "DRAFT"
+    },
+    "lineItems": {
+      "type": "string"
+    },
+    "pdfUrl": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client",
+    "invoiceNumber",
+    "amount"
+  ]
+}

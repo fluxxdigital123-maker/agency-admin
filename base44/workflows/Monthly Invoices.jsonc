@@ -1,0 +1,45 @@
+{
+  "name": "Monthly Invoices",
+  "description": "On the 1st of each month, auto-generates a draft invoice for every active client from their monthly fee and ensures a matching monthly payment exists. Also flips sent invoices past their due date to overdue.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 0 1 * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "monthly_invoices",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "generate_drafts": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "generateMonthlyInvoices",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Generate monthly draft invoices",
+            "description": "One draft invoice per active client from their monthly fee"
+          }
+        }
+      }
+    ]
+  }
+}
