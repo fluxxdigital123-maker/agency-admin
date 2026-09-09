@@ -1,0 +1,31 @@
+{
+  "name": "PostingCadence",
+  "type": "object",
+  "properties": {
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "YOUTUBE_SHORTS",
+        "TIKTOK",
+        "INSTAGRAM_REELS",
+        "X",
+        "LINKEDIN"
+      ],
+      "default": "YOUTUBE_SHORTS"
+    },
+    "weeklyTarget": {
+      "type": "number",
+      "default": 3
+    }
+  },
+  "required": [
+    "client",
+    "platform",
+    "weeklyTarget"
+  ]
+}

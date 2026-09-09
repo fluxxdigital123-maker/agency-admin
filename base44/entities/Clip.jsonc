@@ -47,6 +47,10 @@
       "type": "string",
       "format": "date-time"
     },
+    "scheduledDate": {
+      "type": "string",
+      "format": "date"
+    },
     "postedDate": {
       "type": "string",
       "format": "date"
