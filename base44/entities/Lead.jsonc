@@ -27,6 +27,26 @@
     },
     "monthlyRecurring": {
       "type": "number"
+    },
+    "subscribers": {
+      "type": "number"
+    },
+    "avgViews": {
+      "type": "number"
+    },
+    "niche": {
+      "type": "string"
+    },
+    "lastContactDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "nextFollowUp": {
+      "type": "string",
+      "format": "date"
+    },
+    "score": {
+      "type": "number"
     }
   },
   "required": [

@@ -1,12 +1,24 @@
-import React, { useState, useMemo } from "react";
-import { CheckCircle2, Circle, AlertTriangle, TrendingDown } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { CheckCircle2, Circle, AlertTriangle, TrendingDown, Bell } from "lucide-react";
 import { computeGuarantee } from "@/lib/guarantee";
+import { base44 } from "@/api/base44Client";
+import { fmtDate } from "@/lib/format";
 
 const DAY_MS = 86400000;
 
 export default function DailyObjectives({ activeClients, viewSnapshots = [] }) {
   const [done, setDone] = useState({});
+  const [leads, setLeads] = useState([]);
   const today = new Date();
+  const todayStr = today.toISOString().slice(0, 10);
+
+  useEffect(() => {
+    let active = true;
+    base44.entities.Lead.list("-created_date", 500)
+      .then((l) => { if (active) setLeads(l || []); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   const snapsByClient = useMemo(() => {
     const m = {};
@@ -25,6 +37,12 @@ export default function DailyObjectives({ activeClients, viewSnapshots = [] }) {
       return { client: c, days, guarantee: g };
     })
     .filter((it) => it.days <= 30 && it.days >= 1);
+
+  const followUps = useMemo(() => {
+    return leads
+      .filter((l) => l.nextFollowUp && l.status !== "CLOSED" && l.status !== "LOST" && l.nextFollowUp <= todayStr)
+      .sort((a, b) => a.nextFollowUp.localeCompare(b.nextFollowUp));
+  }, [leads, todayStr]);
 
   function toggle(id) {
     setDone((d) => ({ ...d, [id]: !d[id] }));
@@ -94,6 +112,39 @@ export default function DailyObjectives({ activeClients, viewSnapshots = [] }) {
             );
           })}
         </ul>
+      )}
+
+      {followUps.length > 0 && (
+        <div className="mt-5 pt-4" style={{ borderTop: "0.5px solid var(--border)" }}>
+          <div className="flex items-center gap-2 mb-2">
+            <Bell className="w-4 h-4" style={{ color: "#FF9F0A" }} />
+            <h3 className="text-[14px] font-semibold tracking-tight">Follow-ups due</h3>
+            <span className="text-[12px] text-muted-foreground">{followUps.length}</span>
+          </div>
+          <ul className="space-y-1.5">
+            {followUps.slice(0, 6).map((l) => {
+              const overdue = l.nextFollowUp < todayStr;
+              return (
+                <li key={l.id}>
+                  <a
+                    href="/leads"
+                    className="flex items-center justify-between gap-2 rounded-[10px] px-3 py-2 hover:bg-white/[0.03]"
+                    style={{ background: "rgba(255,255,255,0.03)" }}
+                  >
+                    <span className="text-[13px] font-medium truncate">{l.name}</span>
+                    <span
+                      className="text-[11px] tabular-nums shrink-0"
+                      style={{ color: overdue ? "#FF453A" : "#FF9F0A" }}
+                    >
+                      {overdue ? "Overdue · " : ""}
+                      {fmtDate(l.nextFollowUp)}
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
     </div>
   );

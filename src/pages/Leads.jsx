@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import LeadCard, { STATUS_LABELS, STATUS_ORDER, STATUS_HEX } from "@/components/leads/LeadCard";
 import LeadFormModal from "@/components/leads/LeadFormModal";
 import PipelineTotals from "@/components/leads/PipelineTotals";
+import PipelineValueChart from "@/components/leads/PipelineValueChart";
 import { Plus } from "lucide-react";
 
 export default function Leads() {
@@ -29,13 +30,21 @@ export default function Leads() {
     const m = {};
     for (const s of STATUS_ORDER) m[s] = [];
     for (const l of leads) (m[l.status] = m[l.status] || []).push(l);
+    for (const s of STATUS_ORDER) {
+      m[s].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    }
     return m;
   }, [leads]);
 
   async function move(id, status) {
-    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, status } : l)));
+    const patch = { status };
+    const prev = leads.find((l) => l.id === id);
+    if (prev && status !== "TO_CONTACT" && !prev.lastContactDate) {
+      patch.lastContactDate = new Date().toISOString().slice(0, 10);
+    }
+    setLeads((p) => p.map((l) => (l.id === id ? { ...l, ...patch } : l)));
     try {
-      await base44.entities.Lead.update(id, { status });
+      await base44.entities.Lead.update(id, patch);
     } catch {
       load();
     }
@@ -77,6 +86,8 @@ export default function Leads() {
       </div>
 
       <PipelineTotals leads={leads} />
+
+      <PipelineValueChart leads={leads} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {STATUS_ORDER.map((s) => {

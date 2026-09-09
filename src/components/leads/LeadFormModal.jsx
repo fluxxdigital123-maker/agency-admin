@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Loader2, X } from "lucide-react";
 import { STATUS_LABELS, STATUS_ORDER } from "./LeadCard";
+import { computeLeadScore, scoreTone } from "@/lib/leadScore";
 
 export default function LeadFormModal({ lead, onClose, onSaved }) {
   const editing = !!lead;
@@ -11,6 +12,11 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
     status: "TO_CONTACT",
     upfrontCash: "",
     monthlyRecurring: "",
+    subscribers: "",
+    avgViews: "",
+    niche: "",
+    lastContactDate: "",
+    nextFollowUp: "",
     notes: "",
   });
   const [saving, setSaving] = useState(false);
@@ -24,6 +30,11 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
         status: lead.status || "TO_CONTACT",
         upfrontCash: lead.upfrontCash ?? "",
         monthlyRecurring: lead.monthlyRecurring ?? "",
+        subscribers: lead.subscribers ?? "",
+        avgViews: lead.avgViews ?? "",
+        niche: lead.niche || "",
+        lastContactDate: lead.lastContactDate || "",
+        nextFollowUp: lead.nextFollowUp || "",
         notes: lead.notes || "",
       });
     }
@@ -38,14 +49,21 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
     setSaving(true);
     setErr("");
     try {
+      const num = (v) => (v === "" ? null : Number(v));
       const payload = {
         name: form.name.trim(),
         channelUrl: form.channelUrl.trim() || null,
         status: form.status,
-        upfrontCash: form.upfrontCash === "" ? null : Number(form.upfrontCash),
-        monthlyRecurring: form.monthlyRecurring === "" ? null : Number(form.monthlyRecurring),
+        upfrontCash: num(form.upfrontCash),
+        monthlyRecurring: num(form.monthlyRecurring),
+        subscribers: num(form.subscribers),
+        avgViews: num(form.avgViews),
+        niche: form.niche.trim() || null,
+        lastContactDate: form.lastContactDate || null,
+        nextFollowUp: form.nextFollowUp || null,
         notes: form.notes.trim() || null,
       };
+      payload.score = computeLeadScore(payload);
       if (editing) await base44.entities.Lead.update(lead.id, payload);
       else {
         await base44.entities.Lead.create(payload);
@@ -112,10 +130,37 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
             <span className="text-[13px] text-muted-foreground">Monthly recurring ($)</span>
             <input type="number" value={form.monthlyRecurring} onChange={(e) => set("monthlyRecurring", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="0" />
           </label>
+          <label className="block">
+            <span className="text-[13px] text-muted-foreground">Subscribers</span>
+            <input type="number" value={form.subscribers} onChange={(e) => set("subscribers", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="0" />
+          </label>
+          <label className="block">
+            <span className="text-[13px] text-muted-foreground">Avg views / video</span>
+            <input type="number" value={form.avgViews} onChange={(e) => set("avgViews", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="0" />
+          </label>
+          <label className="block col-span-2">
+            <span className="text-[13px] text-muted-foreground">Niche</span>
+            <input value={form.niche} onChange={(e) => set("niche", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="e.g. Fitness, Finance, Tech" />
+          </label>
+          <label className="block">
+            <span className="text-[13px] text-muted-foreground">Last contact</span>
+            <input type="date" value={form.lastContactDate} onChange={(e) => set("lastContactDate", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} />
+          </label>
+          <label className="block">
+            <span className="text-[13px] text-muted-foreground">Next follow-up</span>
+            <input type="date" value={form.nextFollowUp} onChange={(e) => set("nextFollowUp", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} />
+          </label>
           <label className="block col-span-2">
             <span className="text-[13px] text-muted-foreground">Notes</span>
             <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} rows={2} className={`mt-1 w-full rounded-[10px] px-3 py-2 text-[14px] outline-none`} style={inputStyle} />
           </label>
+        </div>
+
+        <div className="mt-3 flex items-center gap-2 text-[13px]">
+          <span className="text-muted-foreground">Lead score</span>
+          <span className="font-semibold tabular-nums" style={{ color: scoreTone(computeLeadScore({ ...form, upfrontCash: form.upfrontCash === "" ? 0 : Number(form.upfrontCash), monthlyRecurring: form.monthlyRecurring === "" ? 0 : Number(form.monthlyRecurring), subscribers: form.subscribers === "" ? 0 : Number(form.subscribers), avgViews: form.avgViews === "" ? 0 : Number(form.avgViews) })) }}>
+            {computeLeadScore({ ...form, upfrontCash: form.upfrontCash === "" ? 0 : Number(form.upfrontCash), monthlyRecurring: form.monthlyRecurring === "" ? 0 : Number(form.monthlyRecurring), subscribers: form.subscribers === "" ? 0 : Number(form.subscribers), avgViews: form.avgViews === "" ? 0 : Number(form.avgViews) })}/100
+          </span>
         </div>
 
         {err && <p className="text-[13px] text-destructive mt-3">{err}</p>}
