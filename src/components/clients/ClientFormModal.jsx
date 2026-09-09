@@ -146,7 +146,7 @@ export default function ClientFormModal({ open, onClose, onSaved, client }) {
       onClick={onClose}
     >
       <div
-        className="glass-modal w-full max-w-xl max-h-[92vh] overflow-y-auto"
+        className="glass-modal mobile-sheet w-full max-w-xl max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div

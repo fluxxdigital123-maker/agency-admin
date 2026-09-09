@@ -165,6 +165,31 @@
 .chat-md a { color: hsl(var(--primary)); text-decoration: underline; }
 .chat-md blockquote { border-left: 2px solid var(--border); padding-left: 0.75em; margin: 0.5em 0; opacity: 0.8; }
 
+/* Mobile full-screen sheet: modals become full-screen at <640px */
+.mobile-sheet {
+  border-radius: 20px;
+}
+@media (max-width: 639px) {
+  .mobile-sheet {
+    position: fixed !important;
+    inset: 0;
+    border-radius: 0;
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 100% !important;
+    height: 100% !important;
+    margin: 0;
+    background: hsl(var(--card)) !important;
+  }
+}
+
+/* Hide scrollbars for swipeable columns */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Prevent horizontal overflow on mobile */
+html, body { overflow-x: hidden; }
+
 /* Thin, elegant scrollbars */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }

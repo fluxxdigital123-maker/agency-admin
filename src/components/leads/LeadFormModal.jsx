@@ -101,18 +101,18 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)" }} onClick={onClose}>
-      <div className="glass-modal w-full max-w-lg p-5" onClick={(e) => e.stopPropagation()}>
+      <div className="glass-modal mobile-sheet w-full max-w-lg p-5 max-h-[92vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[16px] font-semibold">{editing ? "Edit lead" : "New lead"}</h3>
           <button onClick={onClose} className="text-muted-foreground hover:opacity-70"><X className="w-4 h-4" /></button>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label className="block sm:col-span-2">
             <span className="text-[13px] text-muted-foreground">Name</span>
             <input value={form.name} onChange={(e) => set("name", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="Prospect name" />
           </label>
-          <label className="block col-span-2">
+          <label className="block sm:col-span-2">
             <span className="text-[13px] text-muted-foreground">Channel URL</span>
             <input value={form.channelUrl} onChange={(e) => set("channelUrl", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="youtube.com/@handle" />
           </label>
@@ -138,7 +138,7 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
             <span className="text-[13px] text-muted-foreground">Avg views / video</span>
             <input type="number" value={form.avgViews} onChange={(e) => set("avgViews", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="0" />
           </label>
-          <label className="block col-span-2">
+          <label className="block sm:col-span-2">
             <span className="text-[13px] text-muted-foreground">Niche</span>
             <input value={form.niche} onChange={(e) => set("niche", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} placeholder="e.g. Fitness, Finance, Tech" />
           </label>
@@ -150,7 +150,7 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
             <span className="text-[13px] text-muted-foreground">Next follow-up</span>
             <input type="date" value={form.nextFollowUp} onChange={(e) => set("nextFollowUp", e.target.value)} className={`mt-1 ${inputCls}`} style={inputStyle} />
           </label>
-          <label className="block col-span-2">
+          <label className="block sm:col-span-2">
             <span className="text-[13px] text-muted-foreground">Notes</span>
             <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} rows={2} className={`mt-1 w-full rounded-[10px] px-3 py-2 text-[14px] outline-none`} style={inputStyle} />
           </label>

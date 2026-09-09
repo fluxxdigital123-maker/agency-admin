@@ -89,12 +89,12 @@ export default function Leads() {
 
       <PipelineValueChart leads={leads} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="flex md:grid md:grid-cols-2 lg:grid-cols-5 gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 pb-2 md:pb-0">
         {STATUS_ORDER.map((s) => {
           const hex = STATUS_HEX[s];
           const list = byStatus[s] || [];
           return (
-            <div key={s} className="glass-card p-4 flex flex-col min-h-[200px]">
+            <div key={s} className="snap-start shrink-0 w-[82%] sm:w-[48%] md:w-auto md:shrink glass-card p-4 flex flex-col min-h-[200px]">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: hex }} />

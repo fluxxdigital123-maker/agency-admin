@@ -14,7 +14,7 @@ export default function ClipDetailModal({ clip, onClose }) {
   if (!clip) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.5)" }} onClick={onClose}>
-      <div className="glass-modal w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="glass-modal mobile-sheet w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
             <h3 className="text-[18px] font-semibold tracking-tight truncate">{clip.title}</h3>

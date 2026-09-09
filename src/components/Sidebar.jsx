@@ -29,7 +29,7 @@ export default function Sidebar({ collapsed, onToggle }) {
   const items = navItems.filter((item) => canAccessPath(role, item.path));
   return (
     <aside
-      className="fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-black transition-[width] duration-300 ease-out"
+      className="hidden md:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-black transition-[width] duration-300 ease-out"
       style={{ width: collapsed ? 72 : 260, borderRight: "0.5px solid rgba(255,255,255,0.08)" }}
     >
       <div

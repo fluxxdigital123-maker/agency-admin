@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import BottomTabBar from "./BottomTabBar";
 
 export default function Layout() {
   const [collapsed, setCollapsed] = useState(() => {
@@ -12,6 +13,15 @@ export default function Layout() {
   useEffect(() => {
     localStorage.setItem("agency-sidebar-collapsed", String(collapsed));
   }, [collapsed]);
+
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" && window.innerWidth < 768
+  );
+  useEffect(() => {
+    function onResize() { setIsMobile(window.innerWidth < 768); }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   return (
     <div className="relative min-h-screen">
@@ -35,13 +45,15 @@ export default function Layout() {
 
       <div
         className="transition-[margin] duration-300 ease-out"
-        style={{ marginLeft: collapsed ? 72 : 260 }}
+        style={{ marginLeft: isMobile ? 0 : collapsed ? 72 : 260 }}
       >
         <TopBar />
-        <main className="p-6 md:p-8">
+        <main className="p-4 md:p-6 lg:p-8 pb-24 md:pb-8">
           <Outlet />
         </main>
       </div>
+
+      <BottomTabBar />
     </div>
   );
 }

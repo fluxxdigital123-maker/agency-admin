@@ -141,7 +141,55 @@ export default function ClientClips({ clientId, team }) {
           {clips.length === 0 ? "No clips yet. Add your first clip." : "No clips match these filters."}
         </div>
       ) : (
-        <div className="overflow-x-auto -mx-2">
+        <React.Fragment>
+        {/* Mobile card list */}
+        <div className="md:hidden space-y-2">
+          {filtered.map((c) => (
+            <div key={c.id} className="glass-card p-3 space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <button onClick={() => setDetailClip(c)} className="font-medium text-left hover:text-primary transition-colors min-w-0 truncate">
+                  {c.title}
+                </button>
+                <select
+                  value={c.status}
+                  onChange={async (e) => {
+                    const ns = e.target.value;
+                    const patch = { status: ns };
+                    if (ns === "REVIEW" && (!c.clientApproval || c.clientApproval === "NOT_REQUIRED")) patch.clientApproval = "PENDING";
+                    await base44.entities.Clip.update(c.id, patch);
+                    load();
+                  }}
+                  className="h-7 rounded-md px-1.5 text-[11px] outline-none bg-transparent shrink-0"
+                  style={{ border: "0.5px solid var(--border)" }}
+                >
+                  {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] text-muted-foreground">{PLATFORM_LABEL[c.platform] || c.platform}</span>
+                <span className="text-[11px] text-muted-foreground">·</span>
+                <span className="text-[11px] text-muted-foreground">{c.editor ? (editorMap[c.editor]?.name || "—") : "Unassigned"}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Pill status={c.status} />
+                <ApprovalPill approval={c.clientApproval} feedback={c.clientFeedback} />
+              </div>
+              <div className="flex items-center gap-3 text-[12px] text-muted-foreground pt-1" style={{ borderTop: "0.5px solid var(--border)" }}>
+                <span>👁 {fmt(c.views)}</span>
+                <span>♥ {fmt(c.likes)}</span>
+                <span>💬 {fmt(c.comments)}</span>
+                <span>↗ {fmt(c.shares)}</span>
+              </div>
+              {c.sourceVideoUrl && (
+                <a href={c.sourceVideoUrl} target="_blank" rel="noreferrer" className="text-[11px] text-muted-foreground hover:text-primary inline-flex items-center gap-0.5">
+                  <ExternalLink className="w-3 h-3" /> source
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto -mx-2">
           <table className="w-full text-[13px]">
             <thead>
               <tr className="text-left text-muted-foreground border-b" style={{ borderColor: "var(--border)" }}>
@@ -204,6 +252,7 @@ export default function ClientClips({ clientId, team }) {
             </tbody>
           </table>
         </div>
+        </React.Fragment>
       )}
 
       {addOpen && (
@@ -284,7 +333,7 @@ function AddClipModal({ clientId, team, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.5)" }} onClick={onClose}>
-      <div className="glass-modal w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="glass-modal mobile-sheet w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[18px] font-semibold tracking-tight">Add Clip</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-foreground/5">
