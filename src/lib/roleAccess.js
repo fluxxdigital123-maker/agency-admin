@@ -16,6 +16,7 @@ export const PAGE_ACCESS = {
   thumbnails: ["OWNER", "MANAGER"],
   analytics: ["OWNER", "MANAGER"],
   views: ["OWNER", "MANAGER", "EDITOR"],
+  myWork: ["EDITOR"],
   team: ["OWNER", "MANAGER"],
   onboarding: ["OWNER", "MANAGER"],
   settings: ["OWNER"],
@@ -31,6 +32,7 @@ const PATH_TO_PAGE = {
   "/thumbnails": "thumbnails",
   "/analytics": "analytics",
   "/views": "views",
+  "/my-work": "myWork",
   "/team": "team",
   "/onboarding": "onboarding",
   "/settings": "settings",
@@ -49,7 +51,7 @@ export function canAccessPath(role, path) {
 }
 
 export function homePathFor(role) {
-  if (role === "EDITOR") return "/views";
+  if (role === "EDITOR") return "/my-work";
   return "/";
 }
 

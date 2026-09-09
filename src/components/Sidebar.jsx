@@ -3,11 +3,13 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Wallet, Users, Calendar, Target, Lightbulb,
   Image as ImageIcon, BarChart3, Eye, UsersRound, Rocket, Settings, PanelLeft,
+  Clapperboard,
 } from "lucide-react";
 import { useRole } from "@/lib/RoleContext";
 import { canAccessPath } from "@/lib/roleAccess";
 
 const navItems = [
+  { label: "My Work", path: "/my-work", icon: Clapperboard },
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
   { label: "Money", path: "/money", icon: Wallet },
   { label: "Clients", path: "/clients", icon: Users },

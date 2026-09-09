@@ -23,6 +23,7 @@ import Ideation from '@/pages/Ideation';
 import Thumbnails from '@/pages/Thumbnails';
 import Analytics from '@/pages/Analytics';
 import Views from '@/pages/Views';
+import MyWork from '@/pages/MyWork';
 import Team from '@/pages/Team';
 import Onboarding from '@/pages/Onboarding';
 import Settings from '@/pages/Settings';
@@ -73,6 +74,7 @@ const AuthenticatedApp = () => {
           <Route path="/thumbnails" element={<RoleGate page="thumbnails"><Thumbnails /></RoleGate>} />
           <Route path="/analytics" element={<RoleGate page="analytics"><Analytics /></RoleGate>} />
           <Route path="/views" element={<RoleGate page="views"><Views /></RoleGate>} />
+          <Route path="/my-work" element={<RoleGate page="myWork"><MyWork /></RoleGate>} />
           <Route path="/team" element={<RoleGate page="team"><Team /></RoleGate>} />
           <Route path="/onboarding" element={<RoleGate page="onboarding"><Onboarding /></RoleGate>} />
           <Route path="/settings" element={<RoleGate page="settings"><Settings /></RoleGate>} />
