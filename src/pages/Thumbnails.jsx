@@ -74,7 +74,6 @@ export default function Thumbnails() {
       setActiveSessionId(sessionId);
     }
 
-    // persist + optimistically render user message
     const userMsg = await base44.entities.ThumbnailMessage.create({
       session: sessionId, role: "user", kind: "TEXT", content: text, timestamp: now(),
     });
@@ -87,42 +86,42 @@ export default function Thumbnails() {
       { id: imgId, role: "assistant", kind: "IMAGE", content: text, variations: [], _shimmer: true, session: sessionId },
     ]);
 
-    // fire chat + image generation in parallel
-    const chatP = base44.functions
-      .invoke("thumbnailChat", { sessionId, userMessage: text, clientId: clientId || undefined })
-      .then((r) => (r && r.data ? r.data : r))
-      .catch(() => ({ response: "Sorry, something went wrong." }));
+    // 1. Chat: creative direction + optimized nano-banana-pro image prompt
+    let chatData;
+    try {
+      const res = await base44.functions.invoke("thumbnailChat", { sessionId, userMessage: text, clientId: clientId || undefined });
+      chatData = res && res.data ? res.data : res;
+    } catch {
+      chatData = { response: "Sorry, something went wrong." };
+    }
+    const direction = chatData?.response || "Sorry, something went wrong.";
+    const imagePrompt = chatData?.imagePrompt || text;
+    const textSaved = await base44.entities.ThumbnailMessage.create({
+      session: sessionId, role: "assistant", kind: "TEXT", content: direction, timestamp: now(),
+    });
+    setMessages((prev) => prev.map((m) => (m.id === textId ? textSaved : m)));
 
-    const imgP = base44.functions
-      .invoke("generateThumbnailImage", { prompt: text, sessionId, clientId: clientId || undefined })
-      .then((r) => (r && r.data ? r.data : r))
-      .catch(() => ({ configured: false }));
-
-    // chat text
-    chatP.then(async (data) => {
-      const content = data?.response || "Sorry, something went wrong.";
+    // 2. Image generation using the AI-optimized prompt
+    let imgData;
+    try {
+      const res = await base44.functions.invoke("generateThumbnailImage", { prompt: imagePrompt, sessionId, clientId: clientId || undefined });
+      imgData = res && res.data ? res.data : res;
+    } catch {
+      imgData = { configured: false };
+    }
+    if (imgData && imgData.configured && imgData.imageUrl) {
       const saved = await base44.entities.ThumbnailMessage.create({
-        session: sessionId, role: "assistant", kind: "TEXT", content, timestamp: now(),
+        session: sessionId, role: "assistant", kind: "IMAGE", content: imagePrompt,
+        imageUrl: imgData.imageUrl, variations: [imgData.imageUrl], timestamp: now(),
       });
-      setMessages((prev) => prev.map((m) => (m.id === textId ? saved : m)));
-    });
-
-    // image
-    imgP.then(async (data) => {
-      if (data && data.configured && data.imageUrl) {
-        const saved = await base44.entities.ThumbnailMessage.create({
-          session: sessionId, role: "assistant", kind: "IMAGE", content: text,
-          imageUrl: data.imageUrl, variations: [data.imageUrl], timestamp: now(),
-        });
-        setMessages((prev) => prev.map((m) => (m.id === imgId ? saved : m)));
-      } else {
-        const saved = await base44.entities.ThumbnailMessage.create({
-          session: sessionId, role: "assistant", kind: "IMAGE", content: text,
-          variations: [], timestamp: now(),
-        });
-        setMessages((prev) => prev.map((m) => (m.id === imgId ? saved : m)));
-      }
-    });
+      setMessages((prev) => prev.map((m) => (m.id === imgId ? saved : m)));
+    } else {
+      const saved = await base44.entities.ThumbnailMessage.create({
+        session: sessionId, role: "assistant", kind: "IMAGE", content: imagePrompt,
+        variations: [], timestamp: now(),
+      });
+      setMessages((prev) => prev.map((m) => (m.id === imgId ? saved : m)));
+    }
 
     base44.entities.ThumbnailSession.list("-createdAt", 200).then(setSessions);
   }
