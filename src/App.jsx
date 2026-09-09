@@ -22,6 +22,7 @@ import Leads from '@/pages/Leads';
 import Ideation from '@/pages/Ideation';
 import Thumbnails from '@/pages/Thumbnails';
 import Analytics from '@/pages/Analytics';
+import Views from '@/pages/Views';
 import Team from '@/pages/Team';
 import Onboarding from '@/pages/Onboarding';
 import Settings from '@/pages/Settings';
@@ -67,6 +68,7 @@ const AuthenticatedApp = () => {
           <Route path="/ideation" element={<Ideation />} />
           <Route path="/thumbnails" element={<Thumbnails />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/views" element={<Views />} />
           <Route path="/team" element={<Team />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/settings" element={<Settings />} />

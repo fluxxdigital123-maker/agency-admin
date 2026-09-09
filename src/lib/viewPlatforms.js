@@ -1,0 +1,21 @@
+export const PLATFORMS = ["YOUTUBE_SHORTS", "TIKTOK", "INSTAGRAM_REELS", "X", "LINKEDIN"];
+
+export const PLATFORM_LABEL = {
+  YOUTUBE_SHORTS: "YT Shorts",
+  TIKTOK: "TikTok",
+  INSTAGRAM_REELS: "IG Reels",
+  X: "X",
+  LINKEDIN: "LinkedIn",
+};
+
+export const PLATFORM_COLOR = {
+  YOUTUBE_SHORTS: "#FF453A",
+  TIKTOK: "#0A84FF",
+  INSTAGRAM_REELS: "#BF5AF2",
+  X: "#E5E5E5",
+  LINKEDIN: "#64D2FF",
+};
+
+export const CLIENT_PALETTE = [
+  "#0A84FF", "#30D158", "#FF9F0A", "#BF5AF2", "#64D2FF", "#FF375F", "#FFD60A", "#AC8E68",
+];

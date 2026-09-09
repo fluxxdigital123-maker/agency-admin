@@ -1,0 +1,47 @@
+{
+  "name": "ViewSnapshot",
+  "type": "object",
+  "properties": {
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "clip": {
+      "type": "string",
+      "relation": "Clip",
+      "isForeignKey": true
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "YOUTUBE_SHORTS",
+        "TIKTOK",
+        "INSTAGRAM_REELS",
+        "X",
+        "LINKEDIN"
+      ],
+      "default": "YOUTUBE_SHORTS"
+    },
+    "views": {
+      "type": "number"
+    },
+    "likes": {
+      "type": "number"
+    },
+    "comments": {
+      "type": "number"
+    },
+    "shares": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "client",
+    "date"
+  ]
+}

@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Wallet, Users, Calendar, Target, Lightbulb,
-  Image as ImageIcon, BarChart3, UsersRound, Rocket, Settings, PanelLeft,
+  Image as ImageIcon, BarChart3, Eye, UsersRound, Rocket, Settings, PanelLeft,
 } from "lucide-react";
 
 const navItems = [
@@ -14,6 +14,7 @@ const navItems = [
   { label: "Ideation", path: "/ideation", icon: Lightbulb },
   { label: "Thumbnails", path: "/thumbnails", icon: ImageIcon },
   { label: "Analytics", path: "/analytics", icon: BarChart3 },
+  { label: "Views", path: "/views", icon: Eye },
   { label: "Team", path: "/team", icon: UsersRound },
   { label: "Onboarding", path: "/onboarding", icon: Rocket },
   { label: "Settings", path: "/settings", icon: Settings },
