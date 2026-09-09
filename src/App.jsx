@@ -29,6 +29,7 @@ import Onboarding from '@/pages/Onboarding';
 import Settings from '@/pages/Settings';
 import Review from '@/pages/Review';
 import Portal from '@/pages/Portal';
+import AuditLog from '@/pages/AuditLog';
 import { RoleProvider } from "@/lib/RoleContext";
 import RoleGate from "@/components/RoleGate";
 
@@ -80,6 +81,7 @@ const AuthenticatedApp = () => {
           <Route path="/team" element={<RoleGate page="team"><Team /></RoleGate>} />
           <Route path="/onboarding" element={<RoleGate page="onboarding"><Onboarding /></RoleGate>} />
           <Route path="/settings" element={<RoleGate page="settings"><Settings /></RoleGate>} />
+          <Route path="/audit-log" element={<RoleGate page="auditLog"><AuditLog /></RoleGate>} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

@@ -1,0 +1,47 @@
+{
+  "name": "Audit - Invoice",
+  "description": "Records an AuditEvent on every create/update/delete of an Invoice record.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "audit_invoice",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "record": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "recordAuditEvent",
+            "args": {
+              "entityName": "Invoice",
+              "recordId": "${ .trigger.entity_id }",
+              "action": "${ .trigger.event_type }",
+              "before": "${ if .trigger.event_type == \"update\" then ((.trigger.old_data // {}) | tojson) elif .trigger.event_type == \"delete\" then ((.trigger.data // {}) | tojson) else null end }",
+              "after": "${ if .trigger.event_type == \"delete\" then null else ((.trigger.data // {}) | tojson) end }",
+              "createdById": "${ (.trigger.data // {}).created_by_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Record audit event",
+            "description": "Write to AuditEvent log"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create",
+        "update",
+        "delete"
+      ],
+      "entity_name": "Invoice"
+    }
+  }
+}

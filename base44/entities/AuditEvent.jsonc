@@ -1,0 +1,38 @@
+{
+  "name": "AuditEvent",
+  "type": "object",
+  "properties": {
+    "userEmail": {
+      "type": "string",
+      "default": "system"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "create",
+        "update",
+        "delete"
+      ]
+    },
+    "entityName": {
+      "type": "string"
+    },
+    "recordId": {
+      "type": "string"
+    },
+    "before": {
+      "type": "string"
+    },
+    "after": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "action",
+    "entityName"
+  ]
+}

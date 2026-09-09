@@ -20,6 +20,7 @@ export const PAGE_ACCESS = {
   team: ["OWNER", "MANAGER"],
   onboarding: ["OWNER", "MANAGER"],
   settings: ["OWNER"],
+  auditLog: ["OWNER"],
   portal: ["CLIENT"],
 };
 
@@ -37,6 +38,7 @@ const PATH_TO_PAGE = {
   "/team": "team",
   "/onboarding": "onboarding",
   "/settings": "settings",
+  "/audit-log": "auditLog",
   "/portal": "portal",
 };
 

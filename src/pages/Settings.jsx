@@ -52,6 +52,20 @@ export default function Settings() {
       </section>
 
       <section>
+        <h2 className="text-[18px] font-semibold tracking-tight mb-1">Audit Log</h2>
+        <p className="text-[14px] text-muted-foreground mb-3">
+          A trace of every create, update, and delete on clients, payments, clips, team members, and invoices.
+        </p>
+        <a
+          href="/audit-log"
+          className="inline-flex items-center gap-2 h-9 px-4 rounded-[10px] text-[13px] font-medium border hover:bg-foreground/5 transition-colors"
+          style={{ borderColor: "var(--border)" }}
+        >
+          Open audit log →
+        </a>
+      </section>
+
+      <section>
         <h2 className="text-[18px] font-semibold tracking-tight mb-1">Data Export & Backup</h2>
         <p className="text-[14px] text-muted-foreground mb-3">
           Export any entity to CSV, download a full JSON backup, or restore from a previous backup file.
