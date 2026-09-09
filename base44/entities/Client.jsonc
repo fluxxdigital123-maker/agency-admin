@@ -20,6 +20,12 @@
     "contentStrategy": {
       "type": "string"
     },
+    "contentStyle": {
+      "type": "string"
+    },
+    "growthOpportunities": {
+      "type": "string"
+    },
     "planType": {
       "type": "string",
       "enum": [

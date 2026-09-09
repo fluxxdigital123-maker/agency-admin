@@ -16,6 +16,7 @@ import ResetPassword from '@/pages/ResetPassword';
 import Dashboard from '@/pages/Dashboard';
 import Money from '@/pages/Money';
 import Clients from '@/pages/Clients';
+import ClientDetail from '@/pages/ClientDetail';
 import Calendar from '@/pages/Calendar';
 import Leads from '@/pages/Leads';
 import Ideation from '@/pages/Ideation';
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/money" element={<Money />} />
           <Route path="/clients" element={<Clients />} />
+          <Route path="/clients/:id" element={<ClientDetail />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/leads" element={<Leads />} />
           <Route path="/ideation" element={<Ideation />} />
