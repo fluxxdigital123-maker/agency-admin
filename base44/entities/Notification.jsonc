@@ -2,19 +2,25 @@
   "name": "Notification",
   "type": "object",
   "properties": {
-    "title": {
-      "type": "string"
-    },
-    "body": {
-      "type": "string"
-    },
-    "kind": {
+    "type": {
       "type": "string",
       "enum": [
+        "PAYMENT_OVERDUE",
+        "CLIP_STUCK_REVIEW",
+        "GUARANTEE_APPROACHING",
         "CLIENT_APPROVAL",
-        "INFO"
-      ],
-      "default": "INFO"
+        "NEW_LEAD"
+      ]
+    },
+    "message": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false
     },
     "client": {
       "type": "string",
@@ -25,13 +31,10 @@
       "type": "string",
       "relation": "Clip",
       "isForeignKey": true
-    },
-    "read": {
-      "type": "boolean",
-      "default": false
     }
   },
   "required": [
-    "title"
+    "type",
+    "message"
   ]
 }

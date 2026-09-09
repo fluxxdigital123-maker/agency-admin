@@ -47,7 +47,17 @@ export default function LeadFormModal({ lead, onClose, onSaved }) {
         notes: form.notes.trim() || null,
       };
       if (editing) await base44.entities.Lead.update(lead.id, payload);
-      else await base44.entities.Lead.create(payload);
+      else {
+        await base44.entities.Lead.create(payload);
+        try {
+          await base44.entities.Notification.create({
+            type: "NEW_LEAD",
+            message: `New lead added: ${payload.name}`,
+            link: "/leads",
+            read: false,
+          });
+        } catch { /* notification optional */ }
+      }
       onSaved();
       onClose();
     } catch (e) {

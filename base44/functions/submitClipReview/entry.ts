@@ -35,16 +35,14 @@ export default async function(req) {
     });
 
     await base44.asServiceRole.entities.Notification.create({
-      title: decision === "APPROVED"
-        ? `Clip approved by ${client.name}`
-        : `Changes requested by ${client.name}`,
-      body: decision === "APPROVED"
-        ? `${clip.title} — approved by the client.`
-        : `${clip.title} — client requested changes${cleanComment ? ": " + cleanComment.slice(0, 300) : "."}`,
-      kind: "CLIENT_APPROVAL",
+      type: "CLIENT_APPROVAL",
+      message: decision === "APPROVED"
+        ? `${client.name} approved "${clip.title}"`
+        : `${client.name} requested changes on "${clip.title}"${cleanComment ? ": " + cleanComment.slice(0, 300) : ""}`,
+      link: `/clients/${client.id}`,
+      read: false,
       client: client.id,
       clip: clipId,
-      read: false,
     });
 
     return Response.json({ ok: true, decision });

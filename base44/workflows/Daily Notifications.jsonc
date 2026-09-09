@@ -1,0 +1,45 @@
+{
+  "name": "Daily Notifications",
+  "description": "Every day at 9am, scans for overdue payments, clips stuck in Review >48h, and clients approaching the 30-day guarantee mark, generating notifications for each (idempotent).",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_notifications",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "scan_and_notify": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "generateNotifications",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Scan and generate notifications",
+            "description": "Overdue payments, stuck clips, and guarantee deadlines"
+          }
+        }
+      }
+    ]
+  }
+}

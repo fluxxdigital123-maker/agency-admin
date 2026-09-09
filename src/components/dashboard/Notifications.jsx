@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Bell, Check, MessageSquare, X } from "lucide-react";
+import { Bell, X } from "lucide-react";
+import { notifTypeMeta } from "@/lib/notifications";
 
 function timeAgo(iso) {
   if (!iso) return "";
@@ -10,11 +12,11 @@ function timeAgo(iso) {
   if (m < 60) return `${m}m ago`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  return `${d}d ago`;
+  return `${Math.floor(h / 24)}d ago`;
 }
 
 export default function Notifications() {
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,17 +32,14 @@ export default function Notifications() {
     }
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  async function markRead(id) {
-    try {
-      await base44.entities.Notification.update(id, { read: true });
-      setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-    } catch {
-      /* ignore */
+  async function openItem(n) {
+    if (!n.read) {
+      setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
+      try { await base44.entities.Notification.update(n.id, { read: true }); } catch { /* ignore */ }
     }
+    if (n.link) navigate(n.link);
   }
 
   if (loading || items.length === 0) return null;
@@ -58,44 +57,42 @@ export default function Notifications() {
             )}
           </div>
           <h2 className="text-[16px] font-semibold tracking-tight">Notifications</h2>
-          {unread > 0 && (
-            <span className="text-[12px] text-muted-foreground">{unread} new</span>
-          )}
+          {unread > 0 && <span className="text-[12px] text-muted-foreground">{unread} new</span>}
         </div>
       </div>
       <div className="space-y-1.5">
-        {items.slice(0, 6).map((n) => (
-          <div
-            key={n.id}
-            className="flex items-start gap-2 rounded-[10px] px-3 py-2"
-            style={{
-              background: n.read ? "transparent" : "rgba(10,132,255,0.08)",
-              border: n.read ? "0.5px solid transparent" : "0.5px solid rgba(10,132,255,0.2)",
-            }}
-          >
-            <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: n.kind === "CLIENT_APPROVAL" ? "rgba(48,209,88,0.16)" : "rgba(120,120,128,0.16)" }}>
-              {n.kind === "CLIENT_APPROVAL" ? (
-                <Check className="w-3.5 h-3.5" style={{ color: "#30D158" }} />
-              ) : (
-                <MessageSquare className="w-3.5 h-3.5 text-muted-foreground" />
+        {items.slice(0, 6).map((n) => {
+          const meta = notifTypeMeta(n.type || (n.kind === "CLIENT_APPROVAL" ? "CLIENT_APPROVAL" : null));
+          const Icon = meta.icon;
+          return (
+            <div
+              key={n.id}
+              className="flex items-start gap-2 rounded-[10px] px-3 py-2 cursor-pointer"
+              onClick={() => openItem(n)}
+              style={{
+                background: n.read ? "transparent" : `${meta.color}14`,
+                border: n.read ? "0.5px solid transparent" : `0.5px solid ${meta.color}33`,
+              }}
+            >
+              <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${meta.color}22` }}>
+                <Icon className="w-3.5 h-3.5" style={{ color: meta.color }} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-medium leading-snug">{n.message || n.title}</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">{timeAgo(n.created_date)}</div>
+              </div>
+              {!n.read && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); openItem(n); }}
+                  className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-foreground/5 text-muted-foreground shrink-0"
+                  title="Mark as read"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               )}
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13px] font-medium leading-snug">{n.title}</div>
-              {n.body && <div className="text-[12px] text-muted-foreground leading-snug line-clamp-2">{n.body}</div>}
-              <div className="text-[11px] text-muted-foreground mt-0.5">{timeAgo(n.created_date)}</div>
-            </div>
-            {!n.read && (
-              <button
-                onClick={() => markRead(n.id)}
-                className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-foreground/5 text-muted-foreground shrink-0"
-                title="Mark as read"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
