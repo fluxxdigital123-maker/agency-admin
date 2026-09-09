@@ -1,0 +1,43 @@
+{
+  "name": "Payment",
+  "type": "object",
+  "properties": {
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "amount": {
+      "type": "number"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "SETUP",
+        "MONTHLY"
+      ]
+    },
+    "dueDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "paidDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "PAID",
+        "OVERDUE"
+      ],
+      "default": "PENDING"
+    }
+  },
+  "required": [
+    "client",
+    "amount",
+    "type"
+  ]
+}

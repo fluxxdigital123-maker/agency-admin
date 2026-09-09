@@ -1,0 +1,26 @@
+{
+  "name": "IdeationMessage",
+  "type": "object",
+  "properties": {
+    "thread": {
+      "type": "string",
+      "relation": "IdeationThread",
+      "isForeignKey": true
+    },
+    "role": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "thread",
+    "role",
+    "content"
+  ]
+}

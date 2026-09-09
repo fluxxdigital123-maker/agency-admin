@@ -1,0 +1,22 @@
+{
+  "name": "ThumbnailSession",
+  "type": "object",
+  "properties": {
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "title": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "client",
+    "title"
+  ]
+}

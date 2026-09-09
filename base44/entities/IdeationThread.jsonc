@@ -1,0 +1,21 @@
+{
+  "name": "IdeationThread",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "TeamMember",
+  "type": "object",
+  "properties": {
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "CHANNEL_MANAGER",
+        "SHORT_FORM_EDITOR",
+        "LONG_FORM_EDITOR",
+        "THUMBNAIL_DESIGNER"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "cost": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "client",
+    "role",
+    "name"
+  ]
+}
