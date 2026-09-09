@@ -15,6 +15,7 @@ export default function Clients() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [planFilter, setPlanFilter] = useState("ALL");
+  const [sortBy, setSortBy] = useState("NEWEST");
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
@@ -52,12 +53,18 @@ export default function Clients() {
     return map;
   }, [progress]);
 
-  const filtered = clients.filter((c) => {
-    if (search && !(c.name || "").toLowerCase().includes(search.toLowerCase())) return false;
-    if (statusFilter !== "ALL" && c.status !== statusFilter) return false;
-    if (planFilter !== "ALL" && c.planType !== planFilter) return false;
-    return true;
-  });
+  const filtered = clients
+    .filter((c) => {
+      if (search && !(c.name || "").toLowerCase().includes(search.toLowerCase())) return false;
+      if (statusFilter !== "ALL" && c.status !== statusFilter) return false;
+      if (planFilter !== "ALL" && c.planType !== planFilter) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === "NAME") return (a.name || "").localeCompare(b.name || "");
+      if (sortBy === "MRR") return (b.monthlyFee || 0) - (a.monthlyFee || 0);
+      return new Date(b.created_date || 0) - new Date(a.created_date || 0);
+    });
 
   const totalMRR = clients
     .filter((c) => c.status === "ACTIVE")
@@ -116,6 +123,15 @@ export default function Clients() {
             <option value="TEAM_ONLY">Team Only</option>
             <option value="PERSONAL_INVOLVED">Personal Involved</option>
             <option value="CUSTOM">Custom</option>
+          </select>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="h-10 rounded-[10px] bg-background/60 border-border px-3 text-[14px] outline-none focus:ring-2 focus:ring-primary/40"
+          >
+            <option value="NEWEST">Newest</option>
+            <option value="NAME">Name (A–Z)</option>
+            <option value="MRR">MRR (high→low)</option>
           </select>
         </div>
       </div>

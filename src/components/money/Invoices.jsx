@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { fmtMoney, fmtDate } from "@/lib/format";
 import { buildInvoicePdf } from "@/lib/invoicePdf";
-import { FileText, Download, Send, Check, Loader2, Sparkles, Link2 } from "lucide-react";
+import { FileText, Download, Send, Check, Loader2, Sparkles, Link2, Search } from "lucide-react";
 
 const STATUS_HEX = {
   DRAFT: "#8E8E93",
@@ -35,6 +35,8 @@ export default function Invoices({ clients, payments, clientMap, onPaid }) {
   const [busy, setBusy] = useState({});
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("DATE");
 
   async function load() {
     setLoading(true);
@@ -121,7 +123,23 @@ export default function Invoices({ clients, payments, clientMap, onPaid }) {
     }
   }
 
-  const sorted = [...invoices].sort((a, b) => String(b.issueDate || "").localeCompare(String(a.issueDate || "")));
+  const sorted = [...invoices]
+    .filter((inv) => {
+      if (!search.trim()) return true;
+      const q = search.trim().toLowerCase();
+      const cli = clientMap && clientMap[inv.client] ? clientMap[inv.client].name : "";
+      return (inv.invoiceNumber || "").toLowerCase().includes(q) || (cli || "").toLowerCase().includes(q);
+    })
+    .sort((a, b) => {
+      if (sortBy === "AMOUNT") return (b.amount || 0) - (a.amount || 0);
+      if (sortBy === "STATUS") return (a.status || "").localeCompare(b.status || "");
+      if (sortBy === "CLIENT") {
+        const ca = clientMap && clientMap[a.client] ? clientMap[a.client].name : "";
+        const cb = clientMap && clientMap[b.client] ? clientMap[b.client].name : "";
+        return (ca || "").localeCompare(cb || "");
+      }
+      return String(b.issueDate || "").localeCompare(String(a.issueDate || ""));
+    });
 
   return (
     <div className="glass-card overflow-hidden">
@@ -139,6 +157,28 @@ export default function Invoices({ clients, payments, clientMap, onPaid }) {
           {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
           {generating ? "Generating…" : "Generate drafts"}
         </button>
+      </div>
+
+      <div className="px-6 py-3 flex flex-col sm:flex-row gap-2 sm:items-center" style={{ borderBottom: "0.5px solid var(--border)" }}>
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search invoice # or client…"
+            className="w-full h-9 pl-9 pr-3 rounded-[8px] bg-background/60 border border-border text-[14px] outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="h-9 rounded-[8px] bg-background/60 border border-border px-3 text-[14px] outline-none focus:ring-2 focus:ring-primary/40"
+        >
+          <option value="DATE">Sort: Newest</option>
+          <option value="CLIENT">Sort: Client</option>
+          <option value="AMOUNT">Sort: Amount</option>
+          <option value="STATUS">Sort: Status</option>
+        </select>
       </div>
 
       {error && <p className="px-6 pt-3 text-[13px]" style={{ color: "#FF453A" }}>{error}</p>}
