@@ -10,11 +10,25 @@
     "role": {
       "type": "string"
     },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "TEXT",
+        "IMAGE"
+      ],
+      "default": "TEXT"
+    },
     "content": {
       "type": "string"
     },
     "imageUrl": {
       "type": "string"
+    },
+    "variations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "rating": {
       "type": "number",

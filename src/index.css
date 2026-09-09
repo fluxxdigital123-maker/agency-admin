@@ -143,6 +143,14 @@
   }
 }
 
+/* Shimmer placeholder for generating images */
+@keyframes shimmer { 0% { background-position: -480px 0; } 100% { background-position: 480px 0; } }
+.shimmer-bg {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.09) 240px, rgba(255,255,255,0.03) 480px);
+  background-size: 960px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
 /* Markdown rendering for chat messages */
 .chat-md { font-size: 15px; line-height: 1.6; }
 .chat-md p { margin: 0 0 0.75em 0; }
