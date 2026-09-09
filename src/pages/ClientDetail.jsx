@@ -12,6 +12,7 @@ import ClientTeam from "@/components/clients/ClientTeam";
 import ClientPayments from "@/components/clients/ClientPayments";
 import ClientAnalytics from "@/components/clients/ClientAnalytics";
 import ClientClips from "@/components/clients/ClientClips";
+import ClientReports from "@/components/clients/ClientReports";
 import SuggestedTitles from "@/components/clients/SuggestedTitles";
 import SuggestedIdeas from "@/components/clients/SuggestedIdeas";
 import GuaranteeCard from "@/components/clients/GuaranteeCard";
@@ -190,6 +191,8 @@ export default function ClientDetail() {
       <ClientAnalytics snapshots={snapshots} />
 
       <ClientClips clientId={id} team={team} />
+
+      <ClientReports clientId={id} />
 
       {/* Notes */}
       <div className="glass-card p-6">
