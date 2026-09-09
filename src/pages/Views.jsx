@@ -4,6 +4,7 @@ import { Eye, Plus, Upload, TrendingUp, Heart, MessageCircle, Share2 } from "luc
 import ViewsCharts from "@/components/views/ViewsCharts";
 import LogViewsModal from "@/components/views/LogViewsModal";
 import CsvImportModal from "@/components/views/CsvImportModal";
+import ClipPipeline from "@/components/views/ClipPipeline";
 import { PLATFORM_LABEL } from "@/lib/viewPlatforms";
 
 function startOf(period) {
@@ -23,6 +24,7 @@ export default function Views() {
   const [logOpen, setLogOpen] = useState(false);
   const [csvOpen, setCsvOpen] = useState(false);
   const [drillClient, setDrillClient] = useState("");
+  const [tab, setTab] = useState("overview");
 
   async function load() {
     setLoading(true);
@@ -93,22 +95,39 @@ export default function Views() {
           <p className="text-[15px] text-muted-foreground mt-1">Track views and engagement across all client clips.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setCsvOpen(true)}
-            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-[10px] text-[14px] font-medium border hover:bg-foreground/5"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <Upload className="w-4 h-4" /> CSV
-          </button>
-          <button
-            onClick={() => setLogOpen(true)}
-            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-[10px] text-[14px] font-medium bg-primary text-primary-foreground hover:opacity-90"
-          >
-            <Plus className="w-4 h-4" /> Log Views
-          </button>
+          <div className="inline-flex rounded-full p-0.5" style={{ background: "rgba(128,128,128,0.15)" }}>
+            {["overview", "pipeline"].map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={"h-8 px-4 rounded-full text-[13px] font-medium " + (tab === t ? "bg-foreground text-background" : "text-muted-foreground")}
+              >
+                {t === "overview" ? "Overview" : "Pipeline"}
+              </button>
+            ))}
+          </div>
+          {tab === "overview" && (
+            <>
+              <button
+                onClick={() => setCsvOpen(true)}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-[10px] text-[14px] font-medium border hover:bg-foreground/5"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <Upload className="w-4 h-4" /> CSV
+              </button>
+              <button
+                onClick={() => setLogOpen(true)}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-[10px] text-[14px] font-medium bg-primary text-primary-foreground hover:opacity-90"
+              >
+                <Plus className="w-4 h-4" /> Log Views
+              </button>
+            </>
+          )}
         </div>
       </div>
 
+      {tab === "overview" && (
+      <>
       <div className="inline-flex rounded-full p-0.5" style={{ background: "rgba(128,128,128,0.15)" }}>
         {["week", "month"].map((p) => (
           <button
@@ -187,6 +206,10 @@ export default function Views() {
           </>
         )}
       </div>
+
+      </>
+      )}
+      {tab === "pipeline" && <ClipPipeline clients={clients} />}
 
       {logOpen && <LogViewsModal clients={clients} onClose={() => setLogOpen(false)} onSaved={() => { setLogOpen(false); load(); }} />}
       {csvOpen && <CsvImportModal clients={clients} onClose={() => setCsvOpen(false)} onSaved={() => load()} />}

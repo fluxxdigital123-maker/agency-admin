@@ -43,6 +43,10 @@
       ],
       "default": "QUEUED"
     },
+    "statusChangedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
     "postedDate": {
       "type": "string",
       "format": "date"
