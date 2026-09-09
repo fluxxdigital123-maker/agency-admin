@@ -1,0 +1,68 @@
+{
+  "name": "Clip",
+  "type": "object",
+  "properties": {
+    "client": {
+      "type": "string",
+      "relation": "Client",
+      "isForeignKey": true
+    },
+    "title": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "YOUTUBE_SHORTS",
+        "TIKTOK",
+        "INSTAGRAM_REELS",
+        "X",
+        "LINKEDIN"
+      ],
+      "default": "YOUTUBE_SHORTS"
+    },
+    "sourceVideoUrl": {
+      "type": "string"
+    },
+    "clipUrl": {
+      "type": "string"
+    },
+    "editor": {
+      "type": "string",
+      "relation": "TeamMember",
+      "isForeignKey": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "EDITING",
+        "REVIEW",
+        "APPROVED",
+        "POSTED"
+      ],
+      "default": "QUEUED"
+    },
+    "postedDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "views": {
+      "type": "number"
+    },
+    "likes": {
+      "type": "number"
+    },
+    "comments": {
+      "type": "number"
+    },
+    "shares": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "client",
+    "title",
+    "platform"
+  ]
+}

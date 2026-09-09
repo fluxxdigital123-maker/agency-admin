@@ -11,6 +11,7 @@ import PipelineTracker from "@/components/clients/PipelineTracker";
 import ClientTeam from "@/components/clients/ClientTeam";
 import ClientPayments from "@/components/clients/ClientPayments";
 import ClientAnalytics from "@/components/clients/ClientAnalytics";
+import ClientClips from "@/components/clients/ClientClips";
 import SuggestedTitles from "@/components/clients/SuggestedTitles";
 import SuggestedIdeas from "@/components/clients/SuggestedIdeas";
 import ClientFormModal from "@/components/clients/ClientFormModal";
@@ -181,6 +182,8 @@ export default function ClientDetail() {
       </div>
 
       <ClientAnalytics snapshots={snapshots} />
+
+      <ClientClips clientId={id} team={team} />
 
       {/* Notes */}
       <div className="glass-card p-6">
