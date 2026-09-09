@@ -19,6 +19,8 @@ import SuggestedTitles from "@/components/clients/SuggestedTitles";
 import SuggestedIdeas from "@/components/clients/SuggestedIdeas";
 import GuaranteeCard from "@/components/clients/GuaranteeCard";
 import ClientFormModal from "@/components/clients/ClientFormModal";
+import InviteClientModal from "@/components/clients/InviteClientModal";
+import { UserPlus } from "lucide-react";
 
 export default function ClientDetail() {
   const { id } = useParams();
@@ -35,6 +37,7 @@ export default function ClientDetail() {
   const [refreshing, setRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState("");
   const [editOpen, setEditOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [notes, setNotes] = useState("");
   const [notesDirty, setNotesDirty] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
@@ -189,13 +192,21 @@ export default function ClientDetail() {
         >
           <ArrowLeft className="w-4 h-4" /> Clients
         </button>
-        <button
-          onClick={() => setEditOpen(true)}
-          className="inline-flex items-center gap-2 h-9 px-3 rounded-[10px] text-[14px] font-medium border hover:bg-foreground/5 transition-colors"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <Pencil className="w-4 h-4" /> Edit
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setInviteOpen(true)}
+            className="inline-flex items-center gap-2 h-9 px-3 rounded-[10px] text-[14px] font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+          >
+            <UserPlus className="w-4 h-4" /> Invite client
+          </button>
+          <button
+            onClick={() => setEditOpen(true)}
+            className="inline-flex items-center gap-2 h-9 px-3 rounded-[10px] text-[14px] font-medium border hover:bg-foreground/5 transition-colors"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <Pencil className="w-4 h-4" /> Edit
+          </button>
+        </div>
       </div>
 
       <ClientOverview
@@ -271,6 +282,12 @@ export default function ClientDetail() {
         client={client}
         onClose={() => setEditOpen(false)}
         onSaved={load}
+      />
+
+      <InviteClientModal
+        open={inviteOpen}
+        client={client}
+        onClose={() => setInviteOpen(false)}
       />
     </div>
   );

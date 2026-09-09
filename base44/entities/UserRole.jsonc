@@ -10,7 +10,8 @@
       "enum": [
         "OWNER",
         "MANAGER",
-        "EDITOR"
+        "EDITOR",
+        "CLIENT"
       ],
       "default": "EDITOR"
     },

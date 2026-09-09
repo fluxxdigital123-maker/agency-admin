@@ -28,6 +28,7 @@ import Team from '@/pages/Team';
 import Onboarding from '@/pages/Onboarding';
 import Settings from '@/pages/Settings';
 import Review from '@/pages/Review';
+import Portal from '@/pages/Portal';
 import { RoleProvider } from "@/lib/RoleContext";
 import RoleGate from "@/components/RoleGate";
 
@@ -63,6 +64,7 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/review/:token" element={<Review />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route path="/portal" element={<RoleGate page="portal"><Portal /></RoleGate>} />
         <Route element={<Layout />}>
           <Route path="/" element={<RoleGate page="dashboard"><Dashboard /></RoleGate>} />
           <Route path="/money" element={<RoleGate page="money"><Money /></RoleGate>} />

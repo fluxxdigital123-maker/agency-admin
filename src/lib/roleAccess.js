@@ -1,7 +1,7 @@
-export const ROLES = ["OWNER", "MANAGER", "EDITOR"];
+export const ROLES = ["OWNER", "MANAGER", "EDITOR", "CLIENT"];
 
-export const ROLE_LABEL = { OWNER: "Owner", MANAGER: "Manager", EDITOR: "Editor" };
-export const ROLE_COLOR = { OWNER: "#0A84FF", MANAGER: "#FF9F0A", EDITOR: "#30D158" };
+export const ROLE_LABEL = { OWNER: "Owner", MANAGER: "Manager", EDITOR: "Editor", CLIENT: "Client" };
+export const ROLE_COLOR = { OWNER: "#0A84FF", MANAGER: "#FF9F0A", EDITOR: "#30D158", CLIENT: "#BF5AF2" };
 
 // Which roles may view each page key. Editors only get views + clientDetail
 // (and only their assigned clients there).
@@ -20,6 +20,7 @@ export const PAGE_ACCESS = {
   team: ["OWNER", "MANAGER"],
   onboarding: ["OWNER", "MANAGER"],
   settings: ["OWNER"],
+  portal: ["CLIENT"],
 };
 
 const PATH_TO_PAGE = {
@@ -36,6 +37,7 @@ const PATH_TO_PAGE = {
   "/team": "team",
   "/onboarding": "onboarding",
   "/settings": "settings",
+  "/portal": "portal",
 };
 
 export function pageForPath(path) {
@@ -52,6 +54,7 @@ export function canAccessPath(role, path) {
 
 export function homePathFor(role) {
   if (role === "EDITOR") return "/my-work";
+  if (role === "CLIENT") return "/portal";
   return "/";
 }
 
