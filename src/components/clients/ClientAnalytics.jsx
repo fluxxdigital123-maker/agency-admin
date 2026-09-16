@@ -1,6 +1,6 @@
 import React from "react";
 import { BarChart3 } from "lucide-react";
-import { fmtNumber, fmtMoney, fmtDate } from "@/lib/format";
+import { fmtNumber, fmtDate } from "@/lib/format";
 
 export default function ClientAnalytics({ snapshots }) {
   const latest = snapshots && snapshots[0];

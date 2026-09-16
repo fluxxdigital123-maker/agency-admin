@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { Image as ImageIcon, Loader2, RefreshCw, Layers, Download, Star, Type, ChevronLeft, ChevronRight, Wrench, Sparkles } from "lucide-react";
+import { Loader2, RefreshCw, Layers, Download, Star, Type, ChevronLeft, ChevronRight, Wrench, Sparkles } from "lucide-react";
 
 const STATUS = {
   PAID: "#30D158",
